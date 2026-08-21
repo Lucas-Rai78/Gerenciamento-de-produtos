@@ -21,6 +21,9 @@ def update_produto(db: Session, produto_id: int, dados: schemas.ProdutoCreate):
         db_produto.nome = dados.nome
         db_produto.descricao = dados.descricao
         db_produto.preco = dados.preco
+        db_produto.estoque = dados.estoque
+        db_produto.validade = dados.validade
+        db_produto.peso = dados.peso
         db.commit()
         db.refresh(db_produto)
     return db_produto
