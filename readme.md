@@ -10,7 +10,7 @@ ___
 pip install -r requirements.txt
 ___
 ### executar o backend
-uvicorn app.main:app --reload #inicia o servidor de denvolvimento
+uvicorn app.main:app --reload
 ___
 ### link da interface interativa
 http://127.0.0.1:8000/docs #swagger ui, interface interativa
