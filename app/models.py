@@ -8,7 +8,6 @@ class Produto(Base):
     nome = Column(String, index=True)
     descricao = Column(String)
     preco = Column(Float)
-    estoque = Column(Integer)
     validade = Column(String)
-    peso = Column(Float)    
+    peso = Column(Float) 
 

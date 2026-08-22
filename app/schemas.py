@@ -4,7 +4,6 @@ class ProdutoBase(BaseModel):
   nome: str
   descricao: str
   preco: float
-  estoque: int
   validade: str
   peso: float
   
