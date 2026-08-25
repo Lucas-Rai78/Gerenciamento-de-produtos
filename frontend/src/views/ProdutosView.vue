@@ -6,7 +6,7 @@ import BaseSelect from '../components/BaseSelect.vue';
 
 const categorias: Categoria[] = ['estoque seco', 'doce'];
 
-const form = ref<Produto>({
+const form = ref<Produto & { descricao: string }>({
   nome: '',
   descricao: '',
   quantidadeEstoque: 0,
