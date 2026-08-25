@@ -1,35 +1,32 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref } from 'vue'
 
 interface NavRoute {
-  name: string;
-  path: string;
-  label: string;
+  name: string
+  path: string
+  label: string
 }
 
 const routes: NavRoute[] = [
   { name: 'produtos', path: '/produtos', label: 'Produtos' },
   { name: 'entradas', path: '/entradas', label: 'Entrada de Produtos' },
-  { name: 'saidas', path: '/saidas', label: 'Saída de Produtos' }
-];
+  { name: 'saidas', path: '/saidas', label: 'Saída de Produtos' },
+]
 
-const menuAberto = ref<boolean>(false);
+const menuAberto = ref<boolean>(false)
 
 function toggleMenu(): void {
-  menuAberto.value = !menuAberto.value;
+  menuAberto.value = !menuAberto.value
 }
 </script>
 
 <template>
   <header class="navbar-container">
     <div class="brand">
-      <span class="logo-icon">📦</span>
-      <h1 class="logo-title">Gestão de Estoque</h1>
+      <h1 class="logo-title">Sistema LaPiazza</h1>
     </div>
 
-    <button class="menu-toggle" aria-label="Abrir Menu" @click="toggleMenu">
-      ☰
-    </button>
+    <button class="menu-toggle" aria-label="Abrir Menu" @click="toggleMenu">☰</button>
 
     <nav class="nav-menu" :class="{ 'is-open': menuAberto }">
       <router-link
@@ -51,20 +48,17 @@ function toggleMenu(): void {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: #1e293b;
+  background-color: #00bf63;
   padding: 0.75rem 1.5rem;
-  color: #f8fafc;
+  color: #121212;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+
 }
 
 .brand {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-}
-
-.logo-icon {
-  font-size: 1.5rem;
 }
 
 .logo-title {
@@ -79,23 +73,20 @@ function toggleMenu(): void {
 }
 
 .nav-link {
-  color: #94a3b8;
+  color: #121212;
   text-decoration: none;
   padding: 0.5rem 0.875rem;
-  border-radius: 0.375rem;
-  font-size: 0.9rem;
-  font-weight: 500;
+  font-size: 1rem;
+  font-weight: 600;
   transition: all 0.2s ease;
 }
 
 .nav-link:hover {
-  color: #f8fafc;
-  background-color: #334155;
+  color: #d0cfcf;
 }
 
 .nav-link-active {
   color: #ffffff;
-  background-color: #2563eb;
 }
 
 .menu-toggle {
@@ -119,7 +110,7 @@ function toggleMenu(): void {
     left: 0;
     right: 0;
     flex-direction: column;
-    background-color: #1e293b;
+    background-color: #01923d;
     padding: 1rem;
     gap: 0.5rem;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
