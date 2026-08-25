@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import type { Produto, Categoria } from '../types/inventory';
+import type { Produto, Categoria } from '@/types/produto';
 import BaseInput from '../components/BaseInput.vue';
 import BaseSelect from '../components/BaseSelect.vue';
 

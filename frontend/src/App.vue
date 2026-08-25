@@ -1,18 +1,20 @@
 <script setup lang="ts">
-import NavBar from './components/NavBar.vue';
-
+import NavBar from './components/NavBar.vue'
 </script>
 
 <template>
-  <div>
+  <header>
     <NavBar />
-  </div>
+  </header>
+  <main>
+    <RouterView />
+  </main>
 </template>
 
 <style>
-@import url('https://googleapis.com');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
-*{
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
