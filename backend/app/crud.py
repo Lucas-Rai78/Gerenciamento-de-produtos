@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
-from app import models, schemas
+from backend.app import schemas
+from backend.app import models
 
 def get_produtos(db: Session):
     return db.query(models.Produto).all()
