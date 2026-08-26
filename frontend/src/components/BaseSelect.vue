@@ -8,12 +8,10 @@ interface Props {
   label: string;
   options: Option<T>[] | readonly T[];
   required?: boolean;
-  placeholder?: string;
 }
 
 withDefaults(defineProps<Props>(), {
   required: false,
-  placeholder: 'Selecione uma opção'
 });
 
 const model = defineModel<T>({ required: true });
@@ -26,7 +24,7 @@ const model = defineModel<T>({ required: true });
       <span v-if="required" class="required-asterisk">*</span>
     </label>
     <select v-model="model" :required="required" class="select-field">
-      <option value="" disabled selected>{{ placeholder }}</option>
+      <option value="" disabled selected></option>
       <option
         v-for="opt in options"
         :key="typeof opt === 'string' ? opt : opt.value"
@@ -49,7 +47,7 @@ const model = defineModel<T>({ required: true });
 .select-label {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #334155;
+  color: #121212;
 }
 
 .required-asterisk {
@@ -58,7 +56,7 @@ const model = defineModel<T>({ required: true });
 
 .select-field {
   padding: 0.625rem 0.75rem;
-  border: 1px solid #cbd5e1;
+  border: 1px solid #d4d4d4;
   border-radius: 0.375rem;
   font-size: 0.95rem;
   background-color: #ffffff;
@@ -67,7 +65,7 @@ const model = defineModel<T>({ required: true });
 }
 
 .select-field:focus {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  border-color: #00bf63;
+  box-shadow: 0 0 0 3px rgba(0, 191, 99, 0.15);
 }
 </style>

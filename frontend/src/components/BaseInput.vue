@@ -1,43 +1,38 @@
 <script setup lang="ts">
 interface Props {
-    label: string;
-    type?: 'text' | 'number' | 'date'
-    placeholder?: string;
-    required?:boolean;
-    step?: string;
-    min?: number;
+  label: string;
+  type?: 'text' | 'number' | 'date';
+  required?: boolean;
+  step?: string;
+  min?: number;
 }
 
 withDefaults(defineProps<Props>(), {
-    type: 'text',
-    placeholder: '',
-    required: false,
-    step: 'any',
-    min: 0
-})
+  type: 'text',
+  required: false,
+  step: 'any',
+  min: 0,
+});
 
 const model = defineModel<string | number>({ required: true });
-
 </script>
 
 <template>
-    <div class="input-group">
-<label class="input-label">
+  <div class="input-group">
+    <label class="input-label">
       {{ label }}
       <span v-if="required" class="required-asterisk">*</span>
     </label>
     <input
       v-model="model"
       :type="type"
-      :placeholder="placeholder"
       :required="required"
       :step="step"
       :min="type === 'number' ? min : undefined"
       class="input-field"
     />
-    </div>
+  </div>
 </template>
-
 
 <style scoped>
 .input-group {
@@ -50,7 +45,7 @@ const model = defineModel<string | number>({ required: true });
 .input-label {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #334155;
+  color: #121212;
 }
 
 .required-asterisk {
@@ -59,7 +54,7 @@ const model = defineModel<string | number>({ required: true });
 
 .input-field {
   padding: 0.625rem 0.75rem;
-  border: 1px solid #cbd5e1;
+  border: 1px solid #d4d4d4;
   border-radius: 0.375rem;
   font-size: 0.95rem;
   outline: none;
@@ -67,7 +62,7 @@ const model = defineModel<string | number>({ required: true });
 }
 
 .input-field:focus {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  border-color: #00bf63;
+  box-shadow: 0 0 0 3px rgba(0, 191, 99, 0.15);
 }
 </style>
