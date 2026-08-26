@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Float
-from backend.app.database import Base
+from app.database import Base
 
 class Produto(Base):
     __tablename__ = "produtos"
@@ -7,7 +7,8 @@ class Produto(Base):
     id = Column(Integer, primary_key=True, index=True)
     nome = Column(String, index=True)
     descricao = Column(String)
-    preco = Column(Float)
-    validade = Column(String)
-    peso = Column(Float) 
-
+    categoria = Column(String)
+    precoUnidade = Column(Float)
+    peso = Column(String)
+    quantidadeEstoque = Column(Integer)
+    estoqueMinimo = Column(Integer)

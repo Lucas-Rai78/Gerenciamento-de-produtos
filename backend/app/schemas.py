@@ -1,17 +1,19 @@
 from pydantic import BaseModel
 
 class ProdutoBase(BaseModel):
-  nome: str
-  descricao: str
-  preco: float
-  validade: str
-  peso: float
-  
+    nome: str
+    descricao: str
+    categoria: str
+    precoUnidade: float
+    peso: str
+    quantidadeEstoque: int
+    estoqueMinimo: int
+
 class ProdutoCreate(ProdutoBase):
-  pass
+    pass
 
 class ProdutoResponse(ProdutoBase):
-  id: int
-  
-  class Config:
-    from_attributes = True
+    id: int
+
+    class Config:
+        from_attributes = True

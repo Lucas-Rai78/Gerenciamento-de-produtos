@@ -17,13 +17,15 @@ def create_produto(db: Session, produto: schemas.ProdutoCreate):
     return db_produto   
 
 def update_produto(db: Session, produto_id: int, dados: schemas.ProdutoCreate):
-    db_produto = get_produto_by_id (db, produto_id)
+    db_produto = get_produto_by_id(db, produto_id)
     if db_produto:
         db_produto.nome = dados.nome
         db_produto.descricao = dados.descricao
-        db_produto.preco = dados.preco
-        db_produto.validade = dados.validade
+        db_produto.categoria = dados.categoria
+        db_produto.precoUnidade = dados.precoUnidade
         db_produto.peso = dados.peso
+        db_produto.quantidadeEstoque = dados.quantidadeEstoque
+        db_produto.estoqueMinimo = dados.estoqueMinimo
         db.commit()
         db.refresh(db_produto)
     return db_produto
