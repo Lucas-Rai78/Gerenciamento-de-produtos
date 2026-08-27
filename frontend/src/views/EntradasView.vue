@@ -1,18 +1,20 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import type { Produto, EntradaProduto, Classificacao, UnidadeMedida } from '@/types/produto';
-import { produtoService } from '@/services/produtoService';
-import BaseInput from '@/components/BaseInput.vue';
-import BaseSelect from '@/components/BaseSelect.vue';
+import { ref, onMounted } from 'vue'
+import type { Produto, EntradaProduto, Classificacao, UnidadeMedida } from '@/types/produto'
+import { produtoService } from '@/services/produtoService'
+import { movimentacaoService } from '@/services/movimentacaoService'
+import BaseInput from '@/components/BaseInput.vue'
+import BaseSelect from '@/components/BaseSelect.vue'
+import EntradaTable from '@/components/EntradaTable.vue'
 
-const classificacoes: Classificacao[] = ['compra', 'producao'];
-const unidadesMedida: UnidadeMedida[] = ['g', 'kg', 'mL', 'L'];
+const classificacoes: Classificacao[] = ['compra', 'producao']
+const unidadesMedida: UnidadeMedida[] = ['g', 'kg', 'mL', 'L']
 
-const produtos = ref<Produto[]>([]);
-const carregando = ref<boolean>(false);
+const produtos = ref<Produto[]>([])
+const entradas = ref<EntradaProduto[]>([])
+const carregando = ref<boolean>(false)
 
-// Tipo explícito para o formulário garantindo compatibilidade com datas e strings vazias
-type FormEntrada = Omit<EntradaProduto, 'id' | 'validade'> & { validade: string };
+type FormEntrada = Omit<EntradaProduto, 'id' | 'validade'> & { validade: string }
 
 const form = ref<FormEntrada>({
   produtoId: '',
@@ -22,8 +24,7 @@ const form = ref<FormEntrada>({
   precoUnitario: 0,
   dataEntrada: new Date().toISOString().split('T')[0],
   validade: '',
-  } as FormEntrada
-);
+} as FormEntrada)
 
 function resetForm(): void {
   form.value = {
@@ -34,36 +35,51 @@ function resetForm(): void {
     precoUnitario: 0,
     dataEntrada: new Date().toISOString().split('T')[0],
     validade: '',
-  } as FormEntrada;
+  } as FormEntrada
 }
 
-async function carregarProdutos(): Promise<void> {
+async function carregarDados(): Promise<void> {
   try {
-    carregando.value = true;
-    produtos.value = await produtoService.listar();
+    carregando.value = true
+    const [listaProdutos, listaEntradas] = await Promise.all([
+      produtoService.listar(),
+      movimentacaoService.listarEntradas(),
+    ])
+    produtos.value = listaProdutos
+    entradas.value = listaEntradas
   } catch (error) {
-    console.error('Erro ao carregar produtos para o select:', error);
+    console.error('Erro ao carregar dados de entradas:', error)
   } finally {
-    carregando.value = false;
+    carregando.value = false
   }
 }
 
 async function registrarEntrada(): Promise<void> {
   try {
-    carregando.value = true;
-    console.log('Registrando entrada:', form.value);
-    alert('Entrada registrada com sucesso!');
-    resetForm();
+    carregando.value = true
+    const payload: Parameters<typeof movimentacaoService.criarEntrada>[0] = {
+      produtoId: form.value.produtoId,
+      classificacao: form.value.classificacao,
+      unidadeMedida: form.value.unidadeMedida,
+      quantidade: form.value.quantidade,
+      precoUnitario: form.value.precoUnitario,
+      dataEntrada: form.value.dataEntrada,
+      validade: form.value.validade || undefined,
+    }
+
+    await movimentacaoService.criarEntrada(payload)
+    resetForm()
+    await carregarDados()
   } catch (error) {
-    console.error('Erro ao registrar entrada:', error);
+    console.error('Erro ao registrar entrada:', error)
   } finally {
-    carregando.value = false;
+    carregando.value = false
   }
 }
 
 onMounted(() => {
-  carregarProdutos();
-});
+  carregarDados()
+})
 </script>
 
 <template>
@@ -115,17 +131,8 @@ onMounted(() => {
         </div>
 
         <div class="form-row">
-          <BaseInput
-            v-model="form.dataEntrada"
-            type="date"
-            label="Data de Entrada"
-            required
-          />
-          <BaseInput
-            v-model="form.validade"
-            type="date"
-            label="Data de Validade (Opcional)"
-          />
+          <BaseInput v-model="form.dataEntrada" type="date" label="Data de Entrada" required />
+          <BaseInput v-model="form.validade" type="date" label="Data de Validade (Opcional)" />
         </div>
 
         <div class="actions">
@@ -135,6 +142,9 @@ onMounted(() => {
         </div>
       </form>
     </section>
+
+    <!-- Tabela de Histórico -->
+    <EntradaTable :entradas="entradas" :produtos="produtos" :carregando="carregando" />
   </main>
 </template>
 
@@ -147,14 +157,12 @@ onMounted(() => {
   flex-direction: column;
   gap: 1.5rem;
 }
-
 .card {
   background: #ffffff;
   padding: 1.5rem;
   border-radius: 0.5rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
 }
-
 .title {
   color: #121212;
   font-size: 1.25rem;
@@ -163,35 +171,29 @@ onMounted(() => {
   border-left: 4px solid #00bf63;
   padding-left: 0.5rem;
 }
-
 .form-grid {
   display: flex;
   flex-direction: column;
 }
-
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
 }
-
 .select-group {
   display: flex;
   flex-direction: column;
   gap: 0.375rem;
   margin-bottom: 1rem;
 }
-
 .select-label {
   font-size: 0.875rem;
   font-weight: 600;
   color: #121212;
 }
-
 .required-asterisk {
   color: #ef4444;
 }
-
 .select-field {
   padding: 0.625rem 0.75rem;
   border: 1px solid #d4d4d4;
@@ -199,19 +201,15 @@ onMounted(() => {
   font-size: 0.95rem;
   background-color: #ffffff;
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
 }
-
 .select-field:focus {
   border-color: #00bf63;
   box-shadow: 0 0 0 3px rgba(0, 191, 99, 0.15);
 }
-
 .actions {
   display: flex;
   margin-top: 0.5rem;
 }
-
 .btn-primary {
   flex: 1;
   padding: 0.75rem;
@@ -220,21 +218,16 @@ onMounted(() => {
   border: none;
   border-radius: 0.375rem;
   font-weight: 600;
-  font-size: 1rem;
   cursor: pointer;
-  transition: background-color 0.2s ease, opacity 0.2s;
 }
-
 .btn-primary:hover:not(:disabled) {
   background-color: #01923d;
   color: #ffffff;
 }
-
 .btn-primary:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
-
 @media (max-width: 640px) {
   .form-row {
     grid-template-columns: 1fr;

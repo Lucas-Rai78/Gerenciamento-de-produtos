@@ -1,18 +1,20 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import type { Produto, SaidaProduto, MotivoSaida, UnidadeMedida } from '@/types/produto';
-import { produtoService } from '@/services/produtoService';
-import BaseInput from '@/components/BaseInput.vue';
-import BaseSelect from '@/components/BaseSelect.vue';
+import { ref, onMounted } from 'vue'
+import type { Produto, SaidaProduto, MotivoSaida, UnidadeMedida } from '@/types/produto'
+import { produtoService } from '@/services/produtoService'
+import { movimentacaoService } from '@/services/movimentacaoService'
+import BaseInput from '@/components/BaseInput.vue'
+import BaseSelect from '@/components/BaseSelect.vue'
+import SaidaTable from '@/components/SaidaTable.vue'
 
-const motivosSaida: MotivoSaida[] = ['venda', 'descarte', 'producao'];
-const unidadesMedida: UnidadeMedida[] = ['g', 'kg', 'mL', 'L'];
+const motivosSaida: MotivoSaida[] = ['venda', 'descarte', 'producao']
+const unidadesMedida: UnidadeMedida[] = ['g', 'kg', 'mL', 'L']
 
-const produtos = ref<Produto[]>([]);
-const carregando = ref<boolean>(false);
+const produtos = ref<Produto[]>([])
+const saidas = ref<SaidaProduto[]>([])
+const carregando = ref<boolean>(false)
 
-// Tipo explícito para o formulário de saída
-type FormSaida = Omit<SaidaProduto, 'id'>;
+type FormSaida = Omit<SaidaProduto, 'id'>
 
 const form = ref<FormSaida>({
   produtoId: '',
@@ -20,8 +22,7 @@ const form = ref<FormSaida>({
   unidadeMedida: 'kg',
   quantidade: 0,
   dataSaida: new Date().toISOString().split('T')[0],
-  } as FormSaida
-);
+} as FormSaida)
 
 function resetForm(): void {
   form.value = {
@@ -30,45 +31,59 @@ function resetForm(): void {
     unidadeMedida: 'kg',
     quantidade: 0,
     dataSaida: new Date().toISOString().split('T')[0],
-  } as FormSaida;
+  } as FormSaida
 }
 
-async function carregarProdutos(): Promise<void> {
+async function carregarDados(): Promise<void> {
   try {
-    carregando.value = true;
-    produtos.value = await produtoService.listar();
+    carregando.value = true
+    const [listaProdutos, listaSaidas] = await Promise.all([
+      produtoService.listar(),
+      movimentacaoService.listarSaidas(),
+    ])
+    produtos.value = listaProdutos
+    saidas.value = listaSaidas
   } catch (error) {
-    console.error('Erro ao carregar produtos para o select:', error);
+    console.error('Erro ao carregar dados de saídas:', error)
   } finally {
-    carregando.value = false;
+    carregando.value = false
   }
 }
 
 async function registrarSaida(): Promise<void> {
   try {
-    carregando.value = true;
-    console.log('Registrando saída:', form.value);
-    alert('Saída registrada com sucesso!');
-    resetForm();
+    carregando.value = true
+    type CriarSaidaPayload = Parameters<typeof movimentacaoService.criarSaida>[0]
+    const payload: CriarSaidaPayload = {
+      produtoId: form.value.produtoId,
+      motivo: form.value.motivo,
+      unidadeMedida: form.value.unidadeMedida,
+      quantidade: form.value.quantidade,
+      dataSaida: form.value.dataSaida,
+    }
+
+    await movimentacaoService.criarSaida(payload)
+    resetForm()
+    await carregarDados()
   } catch (error) {
-    console.error('Erro ao registrar saída:', error);
+    console.error('Erro ao registrar saída:', error)
   } finally {
-    carregando.value = false;
+    carregando.value = false
   }
 }
 
 onMounted(() => {
-  carregarProdutos();
-});
+  carregarDados()
+})
 </script>
 
 <template>
   <main class="container">
+    <!-- Formulário -->
     <section class="card">
       <h2 class="title">Saída de Produtos</h2>
 
       <form class="form-grid" @submit.prevent="registrarSaida">
-        <!-- Seletor de Produto Cadastrado -->
         <div class="select-group">
           <label class="select-label">Produto <span class="required-asterisk">*</span></label>
           <select v-model="form.produtoId" required class="select-field">
@@ -86,7 +101,6 @@ onMounted(() => {
             :options="motivosSaida"
             required
           />
-
           <BaseSelect
             v-model="form.unidadeMedida"
             label="Unidade de Medida"
@@ -103,13 +117,7 @@ onMounted(() => {
             step="any"
             required
           />
-
-          <BaseInput
-            v-model="form.dataSaida"
-            type="date"
-            label="Data de Saída"
-            required
-          />
+          <BaseInput v-model="form.dataSaida" type="date" label="Data de Saída" required />
         </div>
 
         <div class="actions">
@@ -119,6 +127,9 @@ onMounted(() => {
         </div>
       </form>
     </section>
+
+    <!-- Tabela de Histórico -->
+    <SaidaTable :saidas="saidas" :produtos="produtos" :carregando="carregando" />
   </main>
 </template>
 
@@ -131,14 +142,12 @@ onMounted(() => {
   flex-direction: column;
   gap: 1.5rem;
 }
-
 .card {
   background: #ffffff;
   padding: 1.5rem;
   border-radius: 0.5rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
 }
-
 .title {
   color: #121212;
   font-size: 1.25rem;
@@ -147,35 +156,29 @@ onMounted(() => {
   border-left: 4px solid #00bf63;
   padding-left: 0.5rem;
 }
-
 .form-grid {
   display: flex;
   flex-direction: column;
 }
-
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
 }
-
 .select-group {
   display: flex;
   flex-direction: column;
   gap: 0.375rem;
   margin-bottom: 1rem;
 }
-
 .select-label {
   font-size: 0.875rem;
   font-weight: 600;
   color: #121212;
 }
-
 .required-asterisk {
   color: #ef4444;
 }
-
 .select-field {
   padding: 0.625rem 0.75rem;
   border: 1px solid #d4d4d4;
@@ -183,19 +186,15 @@ onMounted(() => {
   font-size: 0.95rem;
   background-color: #ffffff;
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
 }
-
 .select-field:focus {
   border-color: #00bf63;
   box-shadow: 0 0 0 3px rgba(0, 191, 99, 0.15);
 }
-
 .actions {
   display: flex;
   margin-top: 0.5rem;
 }
-
 .btn-primary {
   flex: 1;
   padding: 0.75rem;
@@ -204,21 +203,16 @@ onMounted(() => {
   border: none;
   border-radius: 0.375rem;
   font-weight: 600;
-  font-size: 1rem;
   cursor: pointer;
-  transition: background-color 0.2s ease, opacity 0.2s;
 }
-
 .btn-primary:hover:not(:disabled) {
   background-color: #01923d;
   color: #ffffff;
 }
-
 .btn-primary:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
-
 @media (max-width: 640px) {
   .form-row {
     grid-template-columns: 1fr;

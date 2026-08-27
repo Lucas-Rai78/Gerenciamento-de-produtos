@@ -46,3 +46,19 @@ def deletar_produto(produto_id: int, db: Session = Depends(get_db)):
     if not db_produto:
         raise HTTPException(status_code=404, detail="Produto não encontrado")
     return {"mensagem": "Produto removido com sucesso"}
+
+@app.post("/entradas/", response_model=schemas.EntradaResponse, status_code=201)
+def registrar_entrada(entrada: schemas.EntradaCreate, db: Session = Depends(get_db)):
+    return crud.create_entrada(db=db, entrada=entrada)
+
+@app.get("/entradas/", response_model=List[schemas.EntradaResponse])
+def listar_entradas(db: Session = Depends(get_db)):
+    return crud.get_entradas(db=db)
+
+@app.post("/saidas/", response_model=schemas.SaidaResponse, status_code=201)
+def registrar_saida(saida: schemas.SaidaCreate, db: Session = Depends(get_db)):
+    return crud.create_saida(db=db, entrada=saida)
+
+@app.get("/saidas/", response_model=List[schemas.SaidaResponse])
+def listar_saidas(db: Session = Depends(get_db)):
+    return crud.get_saidas(db=db)

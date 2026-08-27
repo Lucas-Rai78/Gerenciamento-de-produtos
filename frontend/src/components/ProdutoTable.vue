@@ -47,9 +47,9 @@ const emit = defineEmits<{
             </td>
             <td>{{ prod.peso }}</td>
             <td class="action-buttons">
-              <button class="btn-edit" title="Editar" @click="emit('editar', prod)">✏️</button>
+              <button class="btn-edit" title="Editar" @click="emit('editar', prod)">Editar</button>
               <button class="btn-delete" title="Excluir" @click="emit('excluir', prod.id)">
-                🗑️
+                Excluir
               </button>
             </td>
           </tr>
@@ -107,10 +107,32 @@ th {
 .btn-edit,
 .btn-delete {
   background: none;
-  border: none;
+  border-radius: 0.25rem;
   cursor: pointer;
   padding: 0.25rem;
   font-size: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  transition: .15s ease-in-out;
+  font-weight: 500;
+}
+
+.btn-edit {
+  border: 2px solid #f0a000;
+  color: #f0a000;
+}
+
+.btn-delete {
+  border: 2px solid #f03000;
+  color: #f03000;
+}
+
+.btn-edit:hover{
+  background-color: #f0a000;
+  color: #ffffff;
+}
+.btn-delete:hover{
+  background-color: #f03000;
+  color: #ffffff;
 }
 
 .empty-msg,
