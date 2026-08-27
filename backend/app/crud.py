@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException
 from app import schemas, models
 
-# PRODUTOS
+# --- PRODUTOS ---
 def get_produtos(db: Session):
     return db.query(models.Produto).all()
 
@@ -37,46 +37,29 @@ def delete_produto(db: Session, produto_id: int):
         db.commit()
     return db_produto
 
-# ENTRADAS (Soma ao estoque existente)
-def create_entrada(db: Session, entrada: schemas.EntradaCreate):
-    produto = get_produto_by_id(db, entrada.produto_id)
+# --- MOVIMENTAÇÕES (UNIFICADO) ---
+def create_movimentacao(db: Session, mov: schemas.MovimentacaoCreate):
+    produto = get_produto_by_id(db, mov.produto_id)
     if not produto:
         raise HTTPException(status_code=404, detail="Produto não encontrado")
-    
-    db_entrada = models.EntradaProduto(**entrada.model_dump())
-    db.add(db_entrada)
-    
-    # Incrementa a quantidade no produto base
-    produto.quantidadeEstoque += entrada.quantidade
-    
+
+    if mov.tipo == "saida":
+        if produto.quantidadeEstoque < mov.quantidade:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Estoque insuficiente. Disponível: {produto.quantidadeEstoque}"
+            )
+        produto.quantidadeEstoque -= mov.quantidade
+    elif mov.tipo == "entrada":
+        produto.quantidadeEstoque += mov.quantidade
+    else:
+        raise HTTPException(status_code=400, detail="Tipo de movimentação inválido")
+
+    db_mov = models.MovimentacaoProduto(**mov.model_dump())
+    db.add(db_mov)
     db.commit()
-    db.refresh(db_entrada)
-    return db_entrada
+    db.refresh(db_mov)
+    return db_mov
 
-def get_entradas(db: Session):
-    return db.query(models.EntradaProduto).all()
-
-# SAÍDAS (Subtrai do estoque existente)
-def create_saida(db: Session, saida: schemas.SaidaCreate):
-    produto = get_produto_by_id(db, saida.produto_id)
-    if not produto:
-        raise HTTPException(status_code=404, detail="Produto não encontrado")
-    
-    if produto.quantidadeEstoque < saida.quantidade:
-        raise HTTPException(
-            status_code=400, 
-            detail=f"Estoque insuficiente. Disponível: {produto.quantidadeEstoque}"
-        )
-    
-    db_saida = models.SaidaProduto(**saida.model_dump())
-    db.add(db_saida)
-    
-    # Decrementa a quantidade no produto base
-    produto.quantidadeEstoque -= saida.quantidade
-    
-    db.commit()
-    db.refresh(db_saida)
-    return db_saida
-
-def get_saidas(db: Session):
-    return db.query(models.SaidaProduto).all()
+def get_movimentacoes(db: Session):
+    return db.query(models.MovimentacaoProduto).order_by(models.MovimentacaoProduto.id.desc()).all()

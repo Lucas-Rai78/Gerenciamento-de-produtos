@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import type { SaidaProduto, Produto } from '@/types/produto';
+import type { SaidaProduto, Produto } from '@/types/produto'
 
 const props = defineProps<{
-  saidas: SaidaProduto[];
-  produtos: Produto[];
-  carregando: boolean;
-}>();
+  saidas: SaidaProduto[]
+  produtos: Produto[]
+  carregando: boolean
+}>()
 
 function getNomeProduto(produtoId: number | string): string {
-  const prod = props.produtos.find((p) => p.id === Number(produtoId));
-  return prod ? prod.nome : `Produto #${produtoId}`;
+  const prod = props.produtos.find((p) => p.id === Number(produtoId))
+  return prod ? prod.nome : `Produto #${produtoId}`
 }
 </script>
 
@@ -33,8 +33,12 @@ function getNomeProduto(produtoId: number | string): string {
         <tbody>
           <tr v-for="item in saidas" :key="item.id">
             <td>#{{ item.id }}</td>
-            <td><strong>{{ getNomeProduto(item.produtoId) }}</strong></td>
-            <td><span class="badge badge-out">{{ item.motivo }}</span></td>
+            <td>
+              <strong>{{ getNomeProduto(item.produtoId) }}</strong>
+            </td>
+            <td>
+              <span class="badge badge-out">{{ item.motivo }}</span>
+            </td>
             <td class="out-stock">-{{ item.quantidade }} {{ item.unidadeMedida }}</td>
             <td>{{ item.dataSaida }}</td>
           </tr>
@@ -66,7 +70,8 @@ table {
   text-align: left;
   font-size: 0.9rem;
 }
-th, td {
+th,
+td {
   padding: 0.75rem 0.5rem;
   border-bottom: 1px solid #e2e8f0;
 }
@@ -81,7 +86,8 @@ th, td {
   color: #dc2626;
   font-weight: 600;
 }
-.empty-msg, .loading {
+.empty-msg,
+.loading {
   color: #64748b;
   text-align: center;
   padding: 1rem 0;

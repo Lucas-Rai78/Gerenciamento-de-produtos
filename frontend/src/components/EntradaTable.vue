@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import type { EntradaProduto, Produto } from '@/types/produto';
+import type { EntradaProduto, Produto } from '@/types/produto'
 
 const props = defineProps<{
-  entradas: EntradaProduto[];
-  produtos: Produto[];
-  carregando: boolean;
-}>();
+  entradas: EntradaProduto[]
+  produtos: Produto[]
+  carregando: boolean
+}>()
 
 function getNomeProduto(produtoId: number | string): string {
-  const prod = props.produtos.find((p) => p.id === Number(produtoId));
-  return prod ? prod.nome : `Produto #${produtoId}`;
+  const prod = props.produtos.find((p) => p.id === Number(produtoId))
+  return prod ? prod.nome : `Produto #${produtoId}`
 }
 
 function calcularTotal(quantidade: number, precoUnitario: number): string {
-  return (quantidade * precoUnitario).toFixed(2);
+  return (quantidade * precoUnitario).toFixed(2)
 }
 </script>
 
@@ -40,13 +40,15 @@ function calcularTotal(quantidade: number, precoUnitario: number): string {
         <tbody>
           <tr v-for="item in entradas" :key="item.id">
             <td>#{{ item.id }}</td>
-            <td><strong>{{ getNomeProduto(item.produtoId) }}</strong></td>
-            <td><span class="badge badge-in">{{ item.classificacao }}</span></td>
+            <td>
+              <strong>{{ getNomeProduto(item.produtoId) }}</strong>
+            </td>
+            <td>
+              <span class="badge badge-in">{{ item.classificacao }}</span>
+            </td>
             <td>+{{ item.quantidade }} {{ item.unidadeMedida }}</td>
             <td>R$ {{ item.precoUnitario.toFixed(2) }}</td>
-            <td class="total-price">
-              R$ {{ calcularTotal(item.quantidade, item.precoUnitario) }}
-            </td>
+            <td class="total-price">R$ {{ calcularTotal(item.quantidade, item.precoUnitario) }}</td>
             <td>{{ item.validade || '-' }}</td>
             <td>{{ item.dataEntrada }}</td>
           </tr>
@@ -78,7 +80,8 @@ table {
   text-align: left;
   font-size: 0.9rem;
 }
-th, td {
+th,
+td {
   padding: 0.75rem 0.5rem;
   border-bottom: 1px solid #e2e8f0;
 }
@@ -93,7 +96,8 @@ th, td {
   font-weight: 600;
   color: #0f172a;
 }
-.empty-msg, .loading {
+.empty-msg,
+.loading {
   color: #64748b;
   text-align: center;
   padding: 1rem 0;

@@ -9,8 +9,7 @@ interface NavRoute {
 
 const routes: NavRoute[] = [
   { name: 'produtos', path: '/produtos', label: 'Produtos' },
-  { name: 'entradas', path: '/entradas', label: 'Entrada de Produtos' },
-  { name: 'saidas', path: '/saidas', label: 'Saída de Produtos' },
+  { name: 'movimentacoes', path: '/movimentacoes', label: 'Movimentacoes' },
 ]
 
 const menuAberto = ref<boolean>(false)

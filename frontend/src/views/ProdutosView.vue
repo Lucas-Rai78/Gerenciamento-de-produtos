@@ -1,23 +1,17 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import type { Produto, ProdutoCreate, Categoria, UnidadeMedida } from '@/types/produto';
-import { produtoService } from '@/services/produtoService';
-import BaseInput from '@/components/BaseInput.vue';
-import BaseSelect from '@/components/BaseSelect.vue';
+import { ref, onMounted } from 'vue'
+import type { Produto, ProdutoCreate, Categoria, UnidadeMedida } from '@/types/produto'
+import { produtoService } from '@/services/produtoService'
+import BaseInput from '@/components/BaseInput.vue'
+import BaseSelect from '@/components/BaseSelect.vue'
 
-const categorias: Categoria[] = [
-  'não perecíveis',
-  'frezer',
-  'hortifruti',
-  'embalagens',
-  'bebidas',
-];
+const categorias: Categoria[] = ['não perecíveis', 'frezer', 'hortifruti', 'embalagens', 'bebidas']
 
-const unidadesMedida: UnidadeMedida[] = ['g', 'kg', 'mL', 'L'];
+const unidadesMedida: UnidadeMedida[] = ['g', 'kg', 'mL', 'L']
 
-const listaProdutos = ref<Produto[]>([]);
-const carregando = ref<boolean>(false);
-const idEmEdicao = ref<number | null>(null);
+const listaProdutos = ref<Produto[]>([])
+const carregando = ref<boolean>(false)
+const idEmEdicao = ref<number | null>(null)
 
 const form = ref<ProdutoCreate>({
   nome: '',
@@ -27,7 +21,7 @@ const form = ref<ProdutoCreate>({
   precoUnidade: 0,
   peso: 'kg',
   categoria: 'não perecíveis',
-});
+})
 
 function resetForm(): void {
   form.value = {
@@ -38,37 +32,37 @@ function resetForm(): void {
     precoUnidade: 0,
     peso: 'kg',
     categoria: 'não perecíveis',
-  };
-  idEmEdicao.value = null;
+  }
+  idEmEdicao.value = null
 }
 
 async function carregarProdutos(): Promise<void> {
   try {
-    carregando.value = true;
-    listaProdutos.value = await produtoService.listar();
+    carregando.value = true
+    listaProdutos.value = await produtoService.listar()
   } catch (error) {
-    console.error('Falha na comunicação com o backend:', error);
+    console.error('Falha na comunicação com o backend:', error)
   } finally {
-    carregando.value = false;
+    carregando.value = false
   }
 }
 
 async function salvarProduto(): Promise<void> {
   try {
     if (idEmEdicao.value) {
-      await produtoService.atualizar(idEmEdicao.value, form.value);
+      await produtoService.atualizar(idEmEdicao.value, form.value)
     } else {
-      await produtoService.criar(form.value);
+      await produtoService.criar(form.value)
     }
-    resetForm();
-    await carregarProdutos();
+    resetForm()
+    await carregarProdutos()
   } catch (error) {
-    console.error('Erro ao salvar produto:', error);
+    console.error('Erro ao salvar produto:', error)
   }
 }
 
 function prepararEdicao(prod: Produto): void {
-  idEmEdicao.value = prod.id;
+  idEmEdicao.value = prod.id
   form.value = {
     nome: prod.nome,
     descricao: prod.descricao,
@@ -77,23 +71,23 @@ function prepararEdicao(prod: Produto): void {
     precoUnidade: prod.precoUnidade,
     peso: prod.peso,
     categoria: prod.categoria,
-  };
+  }
 }
 
 async function excluirProduto(id: number): Promise<void> {
   if (confirm('Tem certeza que deseja remover este produto?')) {
     try {
-      await produtoService.deletar(id);
-      await carregarProdutos();
+      await produtoService.deletar(id)
+      await carregarProdutos()
     } catch (error) {
-      console.error('Erro ao excluir produto:', error);
+      console.error('Erro ao excluir produto:', error)
     }
   }
 }
 
 onMounted(() => {
-  carregarProdutos();
-});
+  carregarProdutos()
+})
 </script>
 
 <template>
@@ -120,12 +114,7 @@ onMounted(() => {
         />
 
         <div class="form-row">
-          <BaseSelect
-            v-model="form.categoria"
-            label="Categoria"
-            :options="categorias"
-            required
-          />
+          <BaseSelect v-model="form.categoria" label="Categoria" :options="categorias" required />
 
           <BaseSelect
             v-model="form.peso"
@@ -163,12 +152,7 @@ onMounted(() => {
           <button type="submit" class="btn-primary">
             {{ idEmEdicao ? 'Atualizar Produto' : 'Cadastrar Produto' }}
           </button>
-          <button
-            v-if="idEmEdicao"
-            type="button"
-            class="btn-secondary"
-            @click="resetForm"
-          >
+          <button v-if="idEmEdicao" type="button" class="btn-secondary" @click="resetForm">
             Cancelar
           </button>
         </div>
@@ -201,7 +185,9 @@ onMounted(() => {
                 <strong>{{ prod.nome }}</strong>
                 <span class="desc-text">{{ prod.descricao }}</span>
               </td>
-              <td><span class="badge">{{ prod.categoria }}</span></td>
+              <td>
+                <span class="badge">{{ prod.categoria }}</span>
+              </td>
               <td>R$ {{ prod.precoUnidade.toFixed(2) }}</td>
               <td :class="{ 'low-stock': prod.quantidadeEstoque <= prod.estoqueMinimo }">
                 {{ prod.quantidadeEstoque }}
@@ -209,8 +195,10 @@ onMounted(() => {
               <td>{{ prod.estoqueMinimo }}</td>
               <td>{{ prod.peso }}</td>
               <td class="action-buttons">
-                <button class="btn-edit" title="Editar" @click="prepararEdicao(prod)">✏️</button>
-                <button class="btn-delete" title="Excluir" @click="excluirProduto(prod.id)">🗑️</button>
+                <button class="btn-edit" title="Editar" @click="prepararEdicao(prod)">Editar</button>
+                <button class="btn-delete" title="Excluir" @click="excluirProduto(prod.id)">
+                  Excluir
+                </button>
               </td>
             </tr>
           </tbody>
@@ -275,7 +263,7 @@ onMounted(() => {
   flex: 1;
   padding: 0.75rem;
   background-color: #00bf63;
-  color: #121212;
+  color: #fff;
   border: none;
   border-radius: 0.375rem;
   font-weight: 600;
@@ -310,7 +298,8 @@ table {
   font-size: 0.9rem;
 }
 
-th, td {
+th,
+td {
   padding: 0.75rem 0.5rem;
   border-bottom: 1px solid #e2e8f0;
 }
@@ -344,15 +333,43 @@ th {
   gap: 0.25rem;
 }
 
-.btn-edit, .btn-delete {
-  background: none;
+.btn-edit,
+.btn-delete {
+  background-color: transparent;
   border: none;
   cursor: pointer;
-  padding: 0.25rem;
+  padding: 0.5rem;
   font-size: 1rem;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
 }
 
-.empty-msg, .loading {
+.btn-edit {
+  color: #f59e0b;
+  border: 2px solid #f59e0b;
+}
+
+.btn-edit:hover {
+  background-color: #f59e0b;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+.btn-delete {
+  color: #ef4444;
+  border: 2px solid #ef4444;
+}
+
+.btn-delete:hover {
+  background-color: #ef4444;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.empty-msg,
+.loading {
   color: #64748b;
   font-size: 0.9rem;
   text-align: center;

@@ -112,7 +112,7 @@ th {
   padding: 0.25rem;
   font-size: 1rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-  transition: .15s ease-in-out;
+  transition: 0.15s ease-in-out;
   font-weight: 500;
 }
 
@@ -126,11 +126,11 @@ th {
   color: #f03000;
 }
 
-.btn-edit:hover{
+.btn-edit:hover {
   background-color: #f0a000;
   color: #ffffff;
 }
-.btn-delete:hover{
+.btn-delete:hover {
   background-color: #f03000;
   color: #ffffff;
 }

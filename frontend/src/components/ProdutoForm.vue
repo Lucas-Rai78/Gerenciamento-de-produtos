@@ -1,22 +1,22 @@
 <script setup lang="ts">
-import type { ProdutoCreate, Categoria, UnidadeMedida } from '@/types/produto';
-import BaseInput from '@/components/BaseInput.vue';
-import BaseSelect from '@/components/BaseSelect.vue';
+import type { ProdutoCreate, Categoria, UnidadeMedida } from '@/types/produto'
+import BaseInput from '@/components/BaseInput.vue'
+import BaseSelect from '@/components/BaseSelect.vue'
 
 interface Props {
-  isEditing: boolean;
-  categorias: Categoria[];
-  unidadesMedida: UnidadeMedida[];
+  isEditing: boolean
+  categorias: Categoria[]
+  unidadesMedida: UnidadeMedida[]
 }
 
-defineProps<Props>();
+defineProps<Props>()
 
-const form = defineModel<ProdutoCreate>({ required: true });
+const form = defineModel<ProdutoCreate>({ required: true })
 
 const emit = defineEmits<{
-  (e: 'salvar'): void;
-  (e: 'cancelar'): void;
-}>();
+  (e: 'salvar'): void
+  (e: 'cancelar'): void
+}>()
 </script>
 
 <template>
@@ -29,15 +29,36 @@ const emit = defineEmits<{
 
       <div class="form-row">
         <BaseSelect v-model="form.categoria" label="Categoria" :options="categorias" required />
-        <BaseSelect v-model="form.peso" label="Unidade de Medida" :options="unidadesMedida" required />
+        <BaseSelect
+          v-model="form.peso"
+          label="Unidade de Medida"
+          :options="unidadesMedida"
+          required
+        />
       </div>
 
       <div class="form-row">
-        <BaseInput v-model.number="form.precoUnidade" type="number" label="Preço Unitário (R$)" step="0.01" required />
-        <BaseInput v-model.number="form.quantidadeEstoque" type="number" label="Estoque Inicial" required />
+        <BaseInput
+          v-model.number="form.precoUnidade"
+          type="number"
+          label="Preço Unitário (R$)"
+          step="0.01"
+          required
+        />
+        <BaseInput
+          v-model.number="form.quantidadeEstoque"
+          type="number"
+          label="Estoque Inicial"
+          required
+        />
       </div>
 
-      <BaseInput v-model.number="form.estoqueMinimo" type="number" label="Estoque Mínimo" required />
+      <BaseInput
+        v-model.number="form.estoqueMinimo"
+        type="number"
+        label="Estoque Mínimo"
+        required
+      />
 
       <div class="actions">
         <button type="submit" class="btn-primary">

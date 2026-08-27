@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, Float, ForeignKey
 from sqlalchemy.orm import relationship
 from app.database import Base
+
 class Produto(Base):
     __tablename__ = "produtos"
 
@@ -13,31 +14,20 @@ class Produto(Base):
     quantidadeEstoque = Column(Integer, default=0)
     estoqueMinimo = Column(Integer, default=0)
 
-    entradas = relationship("EntradaProduto", back_populates="produto")
-    saidas = relationship("SaidaProduto", back_populates="produto")
-    
-class EntradaProduto(Base):
-    __tablename__ = "entradas_produtos"
+    movimentacoes = relationship("MovimentacaoProduto", back_populates="produto")
+
+
+class MovimentacaoProduto(Base):
+    __tablename__ = "movimentacoes_produtos"
 
     id = Column(Integer, primary_key=True, index=True)
     produto_id = Column(Integer, ForeignKey("produtos.id"), nullable=False)
-    classificacao = Column(String)  # 'compra' ou 'producao'
-    unidadeMedida = Column(String)
-    quantidade = Column(Integer)
-    precoUnitario = Column(Float)
-    dataEntrada = Column(String)
+    tipo = Column(String, nullable=False)  # 'entrada' ou 'saida'
+    categoriaMovimentacao = Column(String, nullable=False)  # 'compra', 'producao', 'venda', 'descarte'
+    unidadeMedida = Column(String, nullable=False)
+    quantidade = Column(Integer, nullable=False)
+    precoUnitario = Column(Float, default=0.0)
+    data = Column(String, nullable=False)
     validade = Column(String, nullable=True)
 
-    produto = relationship("Produto", back_populates="entradas")
-
-class SaidaProduto(Base):
-    __tablename__ = "saidas_produtos"
-
-    id = Column(Integer, primary_key=True, index=True)
-    produto_id = Column(Integer, ForeignKey("produtos.id"), nullable=False)
-    motivo = Column(String)  # 'venda', 'descarte' ou 'producao'
-    unidadeMedida = Column(String)
-    quantidade = Column(Integer)
-    dataSaida = Column(String)
-
-    produto = relationship("Produto", back_populates="saidas")
+    produto = relationship("Produto", back_populates="movimentacoes")

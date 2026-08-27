@@ -1,37 +1,34 @@
-import type { EntradaProduto, SaidaProduto } from '@/types/produto';
-
 const API_BASE = 'http://127.0.0.1:8000';
 
+export interface Movimentacao {
+  id?: number;
+  produto_id: number;
+  tipo: 'entrada' | 'saida';
+  categoriaMovimentacao: string;
+  unidadeMedida: string;
+  quantidade: number;
+  precoUnitario?: number;
+  data: string;
+  validade?: string | null;
+}
+
 export const movimentacaoService = {
-  async listarEntradas(): Promise<EntradaProduto[]> {
-    const res = await fetch(`${API_BASE}/entradas/`);
-    if (!res.ok) throw new Error('Erro ao buscar entradas');
+  async listar(): Promise<Movimentacao[]> {
+    const res = await fetch(`${API_BASE}/movimentacoes/`);
+    if (!res.ok) throw new Error('Erro ao buscar movimentações');
     return res.json();
   },
 
-  async criarEntrada(entrada: Omit<EntradaProduto, 'id'>): Promise<EntradaProduto> {
-    const res = await fetch(`${API_BASE}/entradas/`, {
+  async criar(movimentacao: Movimentacao): Promise<Movimentacao> {
+    const res = await fetch(`${API_BASE}/movimentacoes/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(entrada),
+      body: JSON.stringify(movimentacao),
     });
-    if (!res.ok) throw new Error('Erro ao registrar entrada');
-    return res.json();
-  },
-
-  async listarSaidas(): Promise<SaidaProduto[]> {
-    const res = await fetch(`${API_BASE}/saidas/`);
-    if (!res.ok) throw new Error('Erro ao buscar saídas');
-    return res.json();
-  },
-
-  async criarSaida(saida: Omit<SaidaProduto, 'id'>): Promise<SaidaProduto> {
-    const res = await fetch(`${API_BASE}/saidas/`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(saida),
-    });
-    if (!res.ok) throw new Error('Erro ao registrar saída');
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.detail || 'Erro ao registrar movimentação');
+    }
     return res.json();
   },
 };

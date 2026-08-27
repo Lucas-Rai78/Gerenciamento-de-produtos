@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional, List
+from typing import Optional
 
 class ProdutoBase(BaseModel):
     nome: str
@@ -19,35 +19,21 @@ class ProdutoResponse(ProdutoBase):
     class Config:
         from_attributes = True
 
-class EntradaBase(BaseModel):
+
+class MovimentacaoBase(BaseModel):
     produto_id: int
-    classificacao: str
+    tipo: str  # 'entrada' ou 'saida'
+    categoriaMovimentacao: str
     unidadeMedida: str
     quantidade: int
-    precoUnitario: float
-    dataEntrada: str
+    precoUnitario: Optional[float] = 0.0
+    data: str
     validade: Optional[str] = None
 
-class EntradaCreate(EntradaBase):
+class MovimentacaoCreate(MovimentacaoBase):
     pass
 
-class EntradaResponse(EntradaBase):
-    id: int
-
-    class Config:
-        from_attributes = True
-
-class SaidaBase(BaseModel):
-    produto_id: int
-    motivo: str
-    unidadeMedida: str
-    quantidade: int
-    dataSaida: str
-
-class SaidaCreate(SaidaBase):
-    pass
-
-class SaidaResponse(SaidaBase):
+class MovimentacaoResponse(MovimentacaoBase):
     id: int
 
     class Config:

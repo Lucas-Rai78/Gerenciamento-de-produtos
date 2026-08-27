@@ -8,7 +8,7 @@ from app.database import engine, get_db
 
 models.Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="Gerenciador de produtos")
+app = FastAPI(title="Gerenciador de Estoque - LaPiazza")
 
 app.add_middleware(
     CORSMiddleware,
@@ -18,6 +18,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# --- PRODUTOS ---
 @app.post("/produtos/", response_model=schemas.ProdutoResponse, status_code=201)
 def criar_produto(produto: schemas.ProdutoCreate, db: Session = Depends(get_db)):
     return crud.create_produto(db=db, produto=produto)
@@ -47,18 +48,11 @@ def deletar_produto(produto_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Produto não encontrado")
     return {"mensagem": "Produto removido com sucesso"}
 
-@app.post("/entradas/", response_model=schemas.EntradaResponse, status_code=201)
-def registrar_entrada(entrada: schemas.EntradaCreate, db: Session = Depends(get_db)):
-    return crud.create_entrada(db=db, entrada=entrada)
+# --- MOVIMENTAÇÕES ---
+@app.post("/movimentacoes/", response_model=schemas.MovimentacaoResponse, status_code=201)
+def registrar_movimentacao(mov: schemas.MovimentacaoCreate, db: Session = Depends(get_db)):
+    return crud.create_movimentacao(db=db, mov=mov)
 
-@app.get("/entradas/", response_model=List[schemas.EntradaResponse])
-def listar_entradas(db: Session = Depends(get_db)):
-    return crud.get_entradas(db=db)
-
-@app.post("/saidas/", response_model=schemas.SaidaResponse, status_code=201)
-def registrar_saida(saida: schemas.SaidaCreate, db: Session = Depends(get_db)):
-    return crud.create_saida(db=db, entrada=saida)
-
-@app.get("/saidas/", response_model=List[schemas.SaidaResponse])
-def listar_saidas(db: Session = Depends(get_db)):
-    return crud.get_saidas(db=db)
+@app.get("/movimentacoes/", response_model=List[schemas.MovimentacaoResponse])
+def listar_movimentacoes(db: Session = Depends(get_db)):
+    return crud.get_movimentacoes(db=db)
