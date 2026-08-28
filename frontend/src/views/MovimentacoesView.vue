@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import type { Produto, UnidadeMedida } from '@/types/produto'
 import { produtoService } from '@/services/produtoService'
 import { movimentacaoService, type Movimentacao } from '@/services/movimentacaoService'
@@ -28,6 +28,14 @@ const form = ref({
 
 const categoriasDisponiveis = computed(() => {
   return form.value.tipo === 'entrada' ? opcoesEntrada : opcoesSaida
+})
+const produtoSelecionado = computed(() => {
+  return produtos.value.find((p) => p.id === Number(form.value.produtoId))
+})
+
+const estoqueInsuficiente = computed(() => {
+  if (form.value.tipo !== 'saida' || !produtoSelecionado.value) return false
+  return form.value.quantidade > produtoSelecionado.value.quantidadeEstoque
 })
 
 function alterarTipo(novoTipo: 'entrada' | 'saida') {
@@ -91,6 +99,28 @@ async function salvarMovimentacao() {
   }
 }
 
+watch(
+  () => form.value.produtoId,
+  (novoId) => {
+    if (!novoId) return
+
+    const produtoEncontrado = produtos.value.find((p) => p.id === Number(novoId))
+
+    if (produtoEncontrado) {
+      if (typeof produtoEncontrado.precoUnidade === 'number') {
+        form.value.precoUnitario = produtoEncontrado.precoUnidade
+      }
+
+      if (
+        produtoEncontrado.peso &&
+        unidadesMedida.includes(produtoEncontrado.peso as UnidadeMedida)
+      ) {
+        form.value.unidadeMedida = produtoEncontrado.peso as UnidadeMedida
+      }
+    }
+  }
+)
+
 onMounted(() => {
   carregarDados()
 })
@@ -98,10 +128,9 @@ onMounted(() => {
 
 <template>
   <main class="container">
-    <section class="card">
-      <h2 class="title">Gerenciador de Movimentações</h2>
+    <section class="card form-card">
+      <h2 class="title">Movimentações</h2>
 
-      <!-- Seletor Entrada / Saída -->
       <div class="toggle-container">
         <button
           type="button"
@@ -164,21 +193,30 @@ onMounted(() => {
             step="0.01"
             required
           />
-          <BaseInput v-model="form.data" type="date" label="Data" required />
-          <div v-if="form.tipo === 'entrada'">
-            <BaseInput v-model="form.validade" type="date" label="Validade (Opcional)" />
-          </div>
         </div>
 
+        <div class="form-row">
+          <BaseInput v-model="form.data" type="date" label="Data" required />
+          <BaseInput
+            v-if="form.tipo === 'entrada'"
+            v-model="form.validade"
+            type="date"
+            label="Validade (Opcional)"
+          />
+        </div>
 
-        <button type="submit" class="btn-submit" :disabled="carregando">
+        <button type="submit" class="btn-submit" :disabled="carregando || estoqueInsuficiente">
           {{ carregando ? 'Processando...' : 'Registrar Movimentação' }}
         </button>
+        <p v-if="estoqueInsuficiente" class="error-banner" style="margin-top: 0.5rem">
+          Quantidade informada é maior que o estoque atual ({{
+            produtoSelecionado?.quantidadeEstoque
+          }}).
+        </p>
       </form>
     </section>
 
-    <!-- Tabela Unificada de Movimentações -->
-    <section class="card">
+    <section class="card table-card">
       <h3 class="subtitle">Histórico do Estoque</h3>
 
       <div v-if="movimentacoes.length > 0" class="table-responsive">
@@ -231,35 +269,53 @@ onMounted(() => {
 
 <style scoped>
 .container {
-  max-width: 900px;
+  max-width: 1400px;
   margin: 2rem auto;
-  padding: 0 1rem;
+  padding: 0 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
 }
+
 .card {
-  background: #fff;
-  padding: 1.5rem;
+  background: #ffffff;
+  padding: 1.75rem;
   border-radius: 0.5rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
 }
+
+.form-card {
+  max-width: 760px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.table-card {
+  width: 100%;
+}
+
 .title {
+  color: #121212;
   font-size: 1.25rem;
   font-weight: 600;
+  margin-bottom: 1.25rem;
   border-left: 4px solid #00bf63;
   padding-left: 0.5rem;
-  margin-bottom: 1rem;
 }
+
 .subtitle {
+  color: #121212;
   font-size: 1.1rem;
   margin-bottom: 1rem;
 }
+
 .toggle-container {
   display: flex;
   gap: 0.5rem;
   margin-bottom: 1.25rem;
 }
+
 .toggle-btn {
   flex: 1;
   padding: 0.6rem;
@@ -269,105 +325,161 @@ onMounted(() => {
   border-radius: 0.375rem;
   font-weight: 600;
   color: #64748b;
+  transition: all 0.2s ease;
 }
+
 .toggle-btn.active {
   background-color: #00bf63;
-  color: #fff;
+  color: #ffffff;
   border-color: #00bf63;
 }
+
 .toggle-btn.btn-out.active {
   background-color: #ef4444;
-  color: #fff;
+  color: #ffffff;
   border-color: #ef4444;
 }
+
 .form-grid {
   display: flex;
   flex-direction: column;
+  gap: 1rem;
 }
+
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
 }
+
 .select-group {
   display: flex;
   flex-direction: column;
   gap: 0.375rem;
-  margin-bottom: 1rem;
 }
+
 .select-label {
   font-size: 0.875rem;
   font-weight: 600;
+  color: #334155;
 }
+
 .required {
   color: #ef4444;
 }
+
 .select-field {
   padding: 0.625rem;
   border: 1px solid #d4d4d4;
   border-radius: 0.375rem;
   outline: none;
+  font-size: 0.95rem;
+  background-color: #fff;
 }
+
 .btn-submit {
-  margin-top: 1rem;
+  margin-top: 0.5rem;
   padding: 0.75rem;
-  background: #00bf63;
-  color: #fff;
+  background-color: #00bf63;
+  color: #ffffff;
   border: none;
   border-radius: 0.375rem;
   font-weight: 600;
+  font-size: 1rem;
   cursor: pointer;
+  transition: background-color 0.2s ease;
 }
+
 .btn-submit:hover {
-  background: #01923d;
+  background-color: #01923d;
 }
+
+.btn-submit:disabled {
+  background-color: #94a3b8;
+  cursor: not-allowed;
+}
+
 .table-responsive {
   overflow-x: auto;
 }
+
 table {
   width: 100%;
   border-collapse: collapse;
-  text-align: left;
+  text-align: center;
   font-size: 0.9rem;
 }
+
 th,
 td {
-  padding: 0.75rem 0.5rem;
+  padding: 0.875rem 0.75rem;
   border-bottom: 1px solid #e2e8f0;
+  vertical-align: middle;
 }
+
+th {
+  color: #475569;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
 .badge {
-  padding: 0.2rem 0.5rem;
+  display: inline-block;
+  white-space: nowrap;
+  padding: 0.25rem 0.6rem;
   border-radius: 0.25rem;
   font-size: 0.75rem;
   font-weight: bold;
 }
+
 .badge-in {
   background-color: #dcfce7;
   color: #15803d;
 }
+
 .badge-out {
   background-color: #fee2e2;
   color: #b91c1c;
 }
+
+.badge-category {
+  display: inline-block;
+  white-space: nowrap;
+  background-color: #f1f5f9;
+  color: #475569;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.8rem;
+}
+
 .text-in {
   color: #16a34a;
   font-weight: 600;
 }
+
 .text-out {
   color: #dc2626;
   font-weight: 600;
 }
+
 .error-banner {
   color: #b91c1c;
   background: #fee2e2;
-  padding: 0.5rem;
-  border-radius: 0.25rem;
-  margin-bottom: 1rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
   font-size: 0.9rem;
 }
+
 .empty-msg {
-  text-align: center;
   color: #64748b;
+  font-size: 0.9rem;
+  text-align: center;
   padding: 1rem 0;
+}
+
+@media (max-width: 640px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
 }
 </style>

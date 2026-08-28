@@ -7,7 +7,7 @@ import BaseSelect from '@/components/BaseSelect.vue'
 
 const categorias: Categoria[] = ['não perecíveis', 'frezer', 'hortifruti', 'embalagens', 'bebidas']
 
-const unidadesMedida: UnidadeMedida[] = ['g', 'kg', 'mL', 'L']
+const unidadesMedida: UnidadeMedida[] = ['g', 'kg', 'mL', 'L', 'Fardo']
 
 const listaProdutos = ref<Produto[]>([])
 const carregando = ref<boolean>(false)
@@ -80,7 +80,8 @@ async function excluirProduto(id: number): Promise<void> {
       await produtoService.deletar(id)
       await carregarProdutos()
     } catch (error) {
-      console.error('Erro ao excluir produto:', error)
+      const mensagem = error instanceof Error ? error.message : String(error)
+      alert(`Falha ao excluir produto: ${mensagem}`)
     }
   }
 }
@@ -93,7 +94,7 @@ onMounted(() => {
 <template>
   <main class="container">
     <!-- Formulário -->
-    <section class="card">
+    <section class="card form-card">
       <h2 class="title">
         {{ idEmEdicao ? 'Editar Produto' : 'Cadastro de Produtos' }}
       </h2>
@@ -173,6 +174,8 @@ onMounted(() => {
               <th>Categoria</th>
               <th>Preço Un.</th>
               <th>Estoque</th>
+              <th>Preço Total</th>
+              <!-- 1. Nova Coluna -->
               <th>Estoque Mín.</th>
               <th>Medida</th>
               <th>Ações</th>
@@ -192,10 +195,18 @@ onMounted(() => {
               <td :class="{ 'low-stock': prod.quantidadeEstoque <= prod.estoqueMinimo }">
                 {{ prod.quantidadeEstoque }}
               </td>
+
+              <!-- 2. Cálculo do Preço Total do Estoque -->
+              <td>
+                <strong>R$ {{ (prod.quantidadeEstoque * prod.precoUnidade).toFixed(2) }}</strong>
+              </td>
+
               <td>{{ prod.estoqueMinimo }}</td>
               <td>{{ prod.peso }}</td>
               <td class="action-buttons">
-                <button class="btn-edit" title="Editar" @click="prepararEdicao(prod)">Editar</button>
+                <button class="btn-edit" title="Editar" @click="prepararEdicao(prod)">
+                  Editar
+                </button>
                 <button class="btn-delete" title="Excluir" @click="excluirProduto(prod.id)">
                   Excluir
                 </button>
@@ -212,9 +223,9 @@ onMounted(() => {
 
 <style scoped>
 .container {
-  max-width: 900px;
+  max-width: 1400px;
   margin: 2rem auto;
-  padding: 0 1rem;
+  padding: 0 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
@@ -222,9 +233,20 @@ onMounted(() => {
 
 .card {
   background: #ffffff;
-  padding: 1.5rem;
+  padding: 1.75rem;
   border-radius: 0.5rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
+}
+
+.form-card {
+  max-width: 760px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.table-card {
+  width: 100%;
 }
 
 .title {
@@ -245,6 +267,7 @@ onMounted(() => {
 .form-grid {
   display: flex;
   flex-direction: column;
+  gap: 1rem;
 }
 
 .form-row {
@@ -274,7 +297,6 @@ onMounted(() => {
 
 .btn-primary:hover {
   background-color: #01923d;
-  color: #ffffff;
 }
 
 .btn-secondary {
@@ -294,33 +316,39 @@ onMounted(() => {
 table {
   width: 100%;
   border-collapse: collapse;
-  text-align: left;
+  text-align: center;
   font-size: 0.9rem;
 }
 
 th,
 td {
-  padding: 0.75rem 0.5rem;
+  padding: 0.875rem 0.75rem;
   border-bottom: 1px solid #e2e8f0;
+  vertical-align: middle;
 }
 
 th {
   color: #475569;
   font-weight: 600;
+  white-space: nowrap;
 }
 
 .desc-text {
   display: block;
   font-size: 0.75rem;
   color: #64748b;
+  margin-top: 0.2rem;
 }
 
 .badge {
+  display: inline-block;
+  white-space: nowrap;
   background-color: #e2e8f0;
   color: #334155;
-  padding: 0.2rem 0.5rem;
+  padding: 0.25rem 0.6rem;
   border-radius: 0.25rem;
   font-size: 0.75rem;
+  font-weight: 500;
 }
 
 .low-stock {
@@ -330,42 +358,43 @@ th {
 
 .action-buttons {
   display: flex;
-  gap: 0.25rem;
+  gap: 0.5rem;
+  white-space: nowrap;
+  align-items: center;
+  justify-content: center;
 }
 
 .btn-edit,
 .btn-delete {
   background-color: transparent;
-  border: none;
   cursor: pointer;
-  padding: 0.5rem;
-  font-size: 1rem;
-  border-radius: 0.5rem;
-  transition: all 0.3s ease;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+  border-radius: 0.375rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
 }
 
 .btn-edit {
   color: #f59e0b;
-  border: 2px solid #f59e0b;
+  border: 1.5px solid #f59e0b;
 }
 
 .btn-edit:hover {
   background-color: #f59e0b;
   color: #ffffff;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+  transform: translateY(-1px);
 }
 
 .btn-delete {
   color: #ef4444;
-  border: 2px solid #ef4444;
+  border: 1.5px solid #ef4444;
 }
 
 .btn-delete:hover {
   background-color: #ef4444;
   color: #ffffff;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+  transform: translateY(-1px);
 }
 
 .empty-msg,

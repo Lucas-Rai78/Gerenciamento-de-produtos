@@ -1,4 +1,4 @@
-export type UnidadeMedida = 'g' | 'kg' | 'mL' | 'L'
+export type UnidadeMedida = 'g' | 'kg' | 'mL' | 'L' | 'Fardo'
 export type MotivoSaida = 'venda' | 'descarte' | 'producao'
 export type Categoria =  'não perecíveis' | 'frezer' | 'hortifruti' | 'embalagens' | 'bebidas'
 export type Classificacao = 'compra' | 'producao'

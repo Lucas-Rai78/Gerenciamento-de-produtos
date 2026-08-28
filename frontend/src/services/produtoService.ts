@@ -36,9 +36,13 @@ export const produtoService = {
   },
 
   async deletar(id: number): Promise<void> {
-    const response = await fetch(`${API_BASE}/produtos/${id}`, {
+    const res = await fetch(`${API_BASE}/produtos/${id}`, {
       method: 'DELETE',
     })
-    if (!response.ok) throw new Error('Erro ao remover produto')
+
+    if (!res.ok) {
+      const err: { detail?: string } = await res.json()
+      throw new Error(err.detail || 'Erro ao excluir produto no servidor.')
+    }
   },
 }
