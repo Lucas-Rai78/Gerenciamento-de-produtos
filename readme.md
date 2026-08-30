@@ -17,3 +17,5 @@ http://127.0.0.1:8000/docs #swagger ui, interface interativa
 ___
 ### utilizar a extensão Live Server para rodar o frontend
 ___
+
+Adicionar: barra de pesquisa, preço da saída, formulários em pop-up

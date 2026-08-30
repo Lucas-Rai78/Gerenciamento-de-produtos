@@ -4,14 +4,15 @@ import type { Produto, ProdutoCreate, Categoria, UnidadeMedida } from '@/types/p
 import { produtoService } from '@/services/produtoService'
 import BaseInput from '@/components/BaseInput.vue'
 import BaseSelect from '@/components/BaseSelect.vue'
+import BaseModal from '@/components/BaseModal.vue'
 
 const categorias: Categoria[] = ['não perecíveis', 'frezer', 'hortifruti', 'embalagens', 'bebidas']
-
-const unidadesMedida: UnidadeMedida[] = ['g', 'kg', 'mL', 'L', 'Fardo']
+const unidadesMedida: UnidadeMedida[] = ['g', 'kg', 'mL', 'L']
 
 const listaProdutos = ref<Produto[]>([])
 const carregando = ref<boolean>(false)
 const idEmEdicao = ref<number | null>(null)
+const isModalOpen = ref<boolean>(false)
 
 const form = ref<ProdutoCreate>({
   nome: '',
@@ -34,6 +35,12 @@ function resetForm(): void {
     categoria: 'não perecíveis',
   }
   idEmEdicao.value = null
+  isModalOpen.value = false
+}
+
+function abrirModalNovo(): void {
+  resetForm()
+  isModalOpen.value = true
 }
 
 async function carregarProdutos(): Promise<void> {
@@ -72,6 +79,7 @@ function prepararEdicao(prod: Produto): void {
     peso: prod.peso,
     categoria: prod.categoria,
   }
+  isModalOpen.value = true
 }
 
 async function excluirProduto(id: number): Promise<void> {
@@ -80,8 +88,7 @@ async function excluirProduto(id: number): Promise<void> {
       await produtoService.deletar(id)
       await carregarProdutos()
     } catch (error) {
-      const mensagem = error instanceof Error ? error.message : String(error)
-      alert(`Falha ao excluir produto: ${mensagem}`)
+      alert(`Erro ao excluir: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
 }
@@ -93,76 +100,16 @@ onMounted(() => {
 
 <template>
   <main class="container">
-    <!-- Formulário -->
-    <section class="card form-card">
-      <h2 class="title">
-        {{ idEmEdicao ? 'Editar Produto' : 'Cadastro de Produtos' }}
-      </h2>
+    <!-- Cabeçalho com botão de ação principal -->
+    <div class="page-header">
+      <h2 class="title">Cadastro de Produtos</h2>
+      <button type="button" class="btn-primary" @click="abrirModalNovo">
+        + Cadastrar Produto
+      </button>
+    </div>
 
-      <form class="form-grid" @submit.prevent="salvarProduto">
-        <BaseInput
-          v-model="form.nome"
-          label="Nome do Produto"
-          placeholder="Ex: Queijo Mozzarella"
-          required
-        />
-
-        <BaseInput
-          v-model="form.descricao"
-          label="Descrição"
-          placeholder="Ex: Peça inteira para fatiar"
-          required
-        />
-
-        <div class="form-row">
-          <BaseSelect v-model="form.categoria" label="Categoria" :options="categorias" required />
-
-          <BaseSelect
-            v-model="form.peso"
-            label="Unidade de Medida (Peso/Vol.)"
-            :options="unidadesMedida"
-            required
-          />
-        </div>
-
-        <div class="form-row">
-          <BaseInput
-            v-model.number="form.precoUnidade"
-            type="number"
-            label="Preço Unitário (R$)"
-            step="0.01"
-            required
-          />
-
-          <BaseInput
-            v-model.number="form.quantidadeEstoque"
-            type="number"
-            label="Estoque Inicial"
-            required
-          />
-        </div>
-
-        <BaseInput
-          v-model.number="form.estoqueMinimo"
-          type="number"
-          label="Estoque Mínimo"
-          required
-        />
-
-        <div class="actions">
-          <button type="submit" class="btn-primary">
-            {{ idEmEdicao ? 'Atualizar Produto' : 'Cadastrar Produto' }}
-          </button>
-          <button v-if="idEmEdicao" type="button" class="btn-secondary" @click="resetForm">
-            Cancelar
-          </button>
-        </div>
-      </form>
-    </section>
-
-    <!-- Tabela -->
+    <!-- Tabela principal -->
     <section class="card table-card">
-      <h3 class="subtitle">Lista de Produtos</h3>
       <div v-if="carregando" class="loading">Carregando produtos...</div>
 
       <div v-else-if="listaProdutos.length > 0" class="table-responsive">
@@ -175,7 +122,6 @@ onMounted(() => {
               <th>Preço Un.</th>
               <th>Estoque</th>
               <th>Preço Total</th>
-              <!-- 1. Nova Coluna -->
               <th>Estoque Mín.</th>
               <th>Medida</th>
               <th>Ações</th>
@@ -195,12 +141,9 @@ onMounted(() => {
               <td :class="{ 'low-stock': prod.quantidadeEstoque <= prod.estoqueMinimo }">
                 {{ prod.quantidadeEstoque }}
               </td>
-
-              <!-- 2. Cálculo do Preço Total do Estoque -->
               <td>
                 <strong>R$ {{ (prod.quantidadeEstoque * prod.precoUnidade).toFixed(2) }}</strong>
               </td>
-
               <td>{{ prod.estoqueMinimo }}</td>
               <td>{{ prod.peso }}</td>
               <td class="action-buttons">
@@ -218,12 +161,77 @@ onMounted(() => {
 
       <p v-else class="empty-msg">Nenhum produto cadastrado no banco.</p>
     </section>
+
+    <!-- Modal contendo o Formulário -->
+    <BaseModal
+      :is-open="isModalOpen"
+      :title="idEmEdicao ? 'Editar Produto' : 'Cadastrar Novo Produto'"
+      @close="resetForm"
+    >
+      <form class="form-grid" @submit.prevent="salvarProduto">
+        <BaseInput
+          v-model="form.nome"
+          label="Nome do Produto"
+          placeholder="Ex: Queijo Mozzarella"
+          required
+        />
+
+        <BaseInput
+          v-model="form.descricao"
+          label="Descrição"
+          placeholder="Ex: Peça inteira para fatiar"
+          required
+        />
+
+        <div class="form-row">
+          <BaseSelect v-model="form.categoria" label="Categoria" :options="categorias" required />
+          <BaseSelect
+            v-model="form.peso"
+            label="Unidade de Medida"
+            :options="unidadesMedida"
+            required
+          />
+        </div>
+
+        <div class="form-row">
+          <BaseInput
+            v-model.number="form.precoUnidade"
+            type="number"
+            label="Preço Unitário (R$)"
+            step="0.01"
+            required
+          />
+          <BaseInput
+            v-model.number="form.quantidadeEstoque"
+            type="number"
+            label="Estoque Inicial"
+            required
+          />
+        </div>
+
+        <BaseInput
+          v-model.number="form.estoqueMinimo"
+          type="number"
+          label="Estoque Mínimo"
+          required
+        />
+
+        <div class="actions">
+          <button type="submit" class="btn-primary">
+            {{ idEmEdicao ? 'Atualizar Produto' : 'Salvar Produto' }}
+          </button>
+          <button type="button" class="btn-secondary" @click="resetForm">
+            Cancelar
+          </button>
+        </div>
+      </form>
+    </BaseModal>
   </main>
 </template>
 
 <style scoped>
 .container {
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 2rem auto;
   padding: 0 1.5rem;
   display: flex;
@@ -231,37 +239,30 @@ onMounted(() => {
   gap: 1.5rem;
 }
 
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  color: #121212;
+  font-size: 1.5rem;
+  font-weight: 600;
+  border-left: 4px solid #00bf63;
+  padding-left: 0.5rem;
+  margin: 0;
+}
+
 .card {
   background: #ffffff;
   padding: 1.75rem;
   border-radius: 0.5rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-  box-sizing: border-box;
-}
-
-.form-card {
-  max-width: 760px;
-  width: 100%;
-  margin: 0 auto;
 }
 
 .table-card {
   width: 100%;
-}
-
-.title {
-  color: #121212;
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin-bottom: 1.25rem;
-  border-left: 4px solid #00bf63;
-  padding-left: 0.5rem;
-}
-
-.subtitle {
-  color: #121212;
-  font-size: 1.1rem;
-  margin-bottom: 1rem;
 }
 
 .form-grid {
@@ -279,18 +280,17 @@ onMounted(() => {
 .actions {
   display: flex;
   gap: 0.5rem;
-  margin-top: 0.5rem;
+  margin-top: 1rem;
 }
 
 .btn-primary {
-  flex: 1;
-  padding: 0.75rem;
+  padding: 0.75rem 1.25rem;
   background-color: #00bf63;
   color: #fff;
   border: none;
   border-radius: 0.375rem;
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 0.95rem;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
@@ -316,7 +316,7 @@ onMounted(() => {
 table {
   width: 100%;
   border-collapse: collapse;
-  text-align: center;
+  text-align: left;
   font-size: 0.9rem;
 }
 
@@ -360,8 +360,6 @@ th {
   display: flex;
   gap: 0.5rem;
   white-space: nowrap;
-  align-items: center;
-  justify-content: center;
 }
 
 .btn-edit,
@@ -383,7 +381,6 @@ th {
 .btn-edit:hover {
   background-color: #f59e0b;
   color: #ffffff;
-  transform: translateY(-1px);
 }
 
 .btn-delete {
@@ -394,7 +391,6 @@ th {
 .btn-delete:hover {
   background-color: #ef4444;
   color: #ffffff;
-  transform: translateY(-1px);
 }
 
 .empty-msg,
@@ -408,6 +404,11 @@ th {
 @media (max-width: 640px) {
   .form-row {
     grid-template-columns: 1fr;
+  }
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
   }
 }
 </style>
