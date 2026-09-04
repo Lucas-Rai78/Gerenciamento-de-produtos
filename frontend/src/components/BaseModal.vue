@@ -22,76 +22,27 @@ onUnmounted(() => window.removeEventListener('keydown', handleKeyDown))
 
 <template>
   <Teleport to="body">
-    <div v-if="isOpen" class="modal-backdrop" @click.self="emit('close')">
-      <div class="modal-container">
-        <header class="modal-header">
-          <h3>{{ title }}</h3>
-          <button class="btn-close" @click="emit('close')">&times;</button>
+    <div
+      v-if="isOpen"
+      class="fixed inset-0 flex items-center justify-center z-9999 p-4 w-screen h-screen bg-black/50"
+      @click.self="emit('close')"
+    >
+      <div
+        class="bg-white rounded-lg w-full max-w-162.5 max-h-[90vh] overflow-y-auto shadow-2xl flex flex-col"
+      >
+        <header class="flex justify-between items-center px-6! py-5! border-b border-gray-100">
+          <h3 class="m-0 text-[1.2rem] text-gray-900">{{ title }}</h3>
+          <button
+            class="bg-transparent border-none text-[1.75rem] leading-none text-gray-400 cursor-pointer p-0 hover:text-[#0f172a]"
+            @click="emit('close')"
+          >
+            &times;
+          </button>
         </header>
-        <div class="modal-body">
+        <div class="p-6!">
           <slot />
         </div>
       </div>
     </div>
   </Teleport>
 </template>
-
-<style scoped>
-.modal-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-  padding: 1rem;
-}
-
-.modal-container {
-  background: #ffffff;
-  border-radius: 0.5rem;
-  width: 100%;
-  max-width: 650px;
-  max-height: 90vh;
-  overflow-y: auto;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-  display: flex;
-  flex-direction: column;
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.modal-header h3 {
-  margin: 0;
-  font-size: 1.2rem;
-  color: #1e293b;
-}
-
-.btn-close {
-  background: transparent;
-  border: none;
-  font-size: 1.75rem;
-  line-height: 1;
-  color: #64748b;
-  cursor: pointer;
-  padding: 0;
-}
-
-.btn-close:hover {
-  color: #0f172a;
-}
-
-.modal-body {
-  padding: 1.5rem;
-}
-</style>

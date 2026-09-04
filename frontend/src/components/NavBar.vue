@@ -9,7 +9,7 @@ interface NavRoute {
 
 const routes: NavRoute[] = [
   { name: 'produtos', path: '/produtos', label: 'Produtos' },
-  { name: 'movimentacoes', path: '/movimentacoes', label: 'Movimentacoes' },
+  { name: 'movimentacoes', path: '/movimentacoes', label: 'Movimentações' },
 ]
 
 const menuAberto = ref<boolean>(false)
@@ -20,20 +20,20 @@ function toggleMenu(): void {
 </script>
 
 <template>
-  <header class="navbar-container">
-    <div class="brand">
-      <h1 class="logo-title">Sistema LaPiazza</h1>
+  <header class="flex items-center justify-between bg-[#00bf63] px-6! py-3! text-gray-900 shadow-md">
+    <div class="flex items-center gap-2">
+      <h1 class="text-5 font-semibold m-0">Sistema LaPiazza</h1>
     </div>
 
-    <button class="menu-toggle" aria-label="Abrir Menu" @click="toggleMenu">☰</button>
+    <button class="hidden max-md:block bg-transparent border-none text-gray-100 text-2xl cursor-pointer" aria-label="Abrir Menu" @click="toggleMenu">☰</button>
 
-    <nav class="nav-menu" :class="{ 'is-open': menuAberto }">
+    <nav class="flex gap-2 max-md:hidden max-md:absolute max-md:top-15 max-md:inset-x-0 max-md:flex-col max-md:bg-[#00bf63] max-md:p-4 max-md:gap-2 max-md:shadow-xl max-md:z-50 [&.is-open]:max-md:flex" :class="{ 'is-open': menuAberto }">
       <router-link
         v-for="route in routes"
         :key="route.name"
         :to="route.path"
-        class="nav-link"
-        active-class="nav-link-active"
+        class="text-gray-900 decoration-none px-3.5! py-2! text-base font-semibold transition-all ease-in-out duration-200 hover:text-white"
+        active-class="text-white "
         @click="menuAberto = false"
       >
         {{ route.label }}
@@ -41,83 +41,3 @@ function toggleMenu(): void {
     </nav>
   </header>
 </template>
-
-<style scoped>
-.navbar-container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background-color: #00bf63;
-  padding: 0.75rem 1.5rem;
-  color: #121212;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-
-}
-
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.logo-title {
-  font-size: 1.125rem;
-  font-weight: 600;
-  margin: 0;
-}
-
-.nav-menu {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.nav-link {
-  color: #121212;
-  text-decoration: none;
-  padding: 0.5rem 0.875rem;
-  font-size: 1rem;
-  font-weight: 600;
-  transition: all 0.2s ease;
-}
-
-.nav-link:hover {
-  color: #d0cfcf;
-}
-
-.nav-link-active {
-  color: #ffffff;
-}
-
-.menu-toggle {
-  display: none;
-  background: none;
-  border: none;
-  color: #f8fafc;
-  font-size: 1.5rem;
-  cursor: pointer;
-}
-
-@media (max-width: 768px) {
-  .menu-toggle {
-    display: block;
-  }
-
-  .nav-menu {
-    display: none;
-    position: absolute;
-    top: 60px;
-    left: 0;
-    right: 0;
-    flex-direction: column;
-    background-color: #01923d;
-    padding: 1rem;
-    gap: 0.5rem;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
-    z-index: 50;
-  }
-
-  .nav-menu.is-open {
-    display: flex;
-  }
-}
-</style>

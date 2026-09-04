@@ -1,5 +1,1 @@
-@import url('https://googleapis.com');
-:root {
-  --vermelho: #f02535;
-  --verde: #01923d
-}
+@import "tailwindcss";

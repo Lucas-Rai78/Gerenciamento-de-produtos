@@ -13,133 +13,71 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <section class="card table-card">
-    <h3 class="subtitle">Lista de Produtos</h3>
+  <section class="bg-white p-6 rounded-lg shadow-[0_2px_4px_rgba(0,0,0,0.08)]">
+    <h3 class="text-[#121212] text-lg font-semibold mb-4">Lista de Produtos</h3>
 
-    <div v-if="carregando" class="loading">Carregando produtos...</div>
+    <div v-if="carregando" class="text-[#64748b] text-sm text-center py-4">
+      Carregando produtos...
+    </div>
 
-    <div v-else-if="produtos.length > 0" class="table-responsive">
-      <table>
+    <div v-else-if="produtos.length > 0" class="overflow-x-auto">
+      <table class="w-full border-collapse text-center text-md">
         <thead>
-          <tr>
-            <th>ID</th>
-            <th>Nome</th>
-            <th>Categoria</th>
-            <th>Preço Un.</th>
-            <th>Estoque</th>
-            <th>Medida</th>
-            <th>Ações</th>
+          <tr class="text-[#475569] font-semibold">
+            <th class="py-3 px-2 border-b border-gray-200 text-[#475569] font-semibold">ID</th>
+            <th class="py-3 px-2 border-b border-gray-200 text-[#475569] font-semibold">Nome</th>
+            <th class="py-3 px-2 border-b border-gray-200 text-[#475569] font-semibold">Categoria</th>
+            <th class="py-3 px-2 border-b border-gray-200 text-[#475569] font-semibold">Preço Un.</th>
+            <th class="py-3 px-2 border-b border-gray-200 text-[#475569] font-semibold">Estoque</th>
+            <th class="py-3 px-2 border-b border-gray-200 text-[#475569] font-semibold">Medida</th>
+            <th class="py-3 px-2 border-b border-gray-200 text-[#475569] font-semibold">Ações</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="prod in produtos" :key="prod.id">
-            <td>#{{ prod.id }}</td>
-            <td>
-              <strong>{{ prod.nome }}</strong>
-              <span class="desc-text">{{ prod.descricao }}</span>
+            <td class="py-3 px-2 border-b border-gray-200">#{{ prod.id }}</td>
+            <td class="py-3 px-2 border-b border-gray-200">
+              <strong class="font-semibold text-gray-900">{{ prod.nome }}</strong>
+              <span class="block text-[0.75rem] text-[#64748b]">{{ prod.descricao }}</span>
             </td>
-            <td>
-              <span class="badge">{{ prod.categoria }}</span>
+            <td class="py-3 px-2 border-b border-gray-200">
+              <span class="inline-block bg-gray-200 text-gray-900 px-2 py-0.5 rounded text-sm font-medium">
+                {{ prod.categoria }}
+              </span>
             </td>
-            <td>R$ {{ prod.precoUnidade.toFixed(2) }}</td>
-            <td :class="{ 'low-stock': prod.quantidadeEstoque <= prod.estoqueMinimo }">
+            <td class="py-3 px-2 border-b border-gray-200">R$ {{ prod.precoUnidade.toFixed(2) }}</td>
+            <td
+              class="py-3 px-2 border-b border-gray-200"
+              :class="{ 'text-red-500 font-semibold': prod.quantidadeEstoque <= prod.estoqueMinimo }"
+            >
               {{ prod.quantidadeEstoque }}
             </td>
-            <td>{{ prod.peso }}</td>
-            <td class="action-buttons">
-              <button class="btn-edit" title="Editar" @click="emit('editar', prod)">Editar</button>
-              <button class="btn-delete" title="Excluir" @click="emit('excluir', prod.id)">
-                Excluir
-              </button>
+            <td class="py-3 px-2 border-b border-gray-200">{{ prod.peso }}</td>
+            <td class="py-3 px-2 border-b border-gray-200">
+              <div class="flex gap-1 items-center justify-center">
+                <button
+                  class="bg-transparent border-2 border-orange-400 text-orange-400 hover:bg-orange-400 hover:text-white rounded cursor-pointer px-2! py-1! text-base shadow-[0_2px_4px_rgba(0,0,0,0.08)] transition-all duration-150 font-medium"
+                  title="Editar"
+                  @click="emit('editar', prod)"
+                >
+                  Editar
+                </button>
+                <button
+                  class="bg-transparent border-2 text-red-600 border-red-600 hover:bg-red-600 hover:text-white rounded cursor-pointer px-2! py-1! text-base shadow-[0_2px_4px_rgba(0,0,0,0.08)] transition-all duration-150 font-medium"
+                  title="Excluir"
+                  @click="emit('excluir', prod.id)"
+                >
+                  Excluir
+                </button>
+              </div>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <p v-else class="empty-msg">Nenhum produto cadastrado no banco.</p>
+    <p v-else class="text-[#64748b] text-sm text-center py-4">
+      Nenhum produto cadastrado no banco.
+    </p>
   </section>
 </template>
-
-<style scoped>
-table {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: left;
-  font-size: 0.9rem;
-}
-
-th,
-td {
-  padding: 0.75rem 0.5rem;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-th {
-  color: #475569;
-  font-weight: 600;
-}
-
-.desc-text {
-  display: block;
-  font-size: 0.75rem;
-  color: #64748b;
-}
-
-.badge {
-  background-color: #e2e8f0;
-  color: #334155;
-  padding: 0.2rem 0.5rem;
-  border-radius: 0.25rem;
-  font-size: 0.75rem;
-}
-
-.low-stock {
-  color: #dc2626;
-  font-weight: 600;
-}
-
-.action-buttons {
-  display: flex;
-  gap: 0.25rem;
-}
-
-.btn-edit,
-.btn-delete {
-  background: none;
-  border-radius: 0.25rem;
-  cursor: pointer;
-  padding: 0.25rem;
-  font-size: 1rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-  transition: 0.15s ease-in-out;
-  font-weight: 500;
-}
-
-.btn-edit {
-  border: 2px solid #f0a000;
-  color: #f0a000;
-}
-
-.btn-delete {
-  border: 2px solid #f03000;
-  color: #f03000;
-}
-
-.btn-edit:hover {
-  background-color: #f0a000;
-  color: #ffffff;
-}
-.btn-delete:hover {
-  background-color: #f03000;
-  color: #ffffff;
-}
-
-.empty-msg,
-.loading {
-  color: #64748b;
-  font-size: 0.9rem;
-  text-align: center;
-  padding: 1rem 0;
-}
-</style>

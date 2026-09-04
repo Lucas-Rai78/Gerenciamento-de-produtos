@@ -120,7 +120,7 @@ watch(
         form.value.unidadeMedida = produtoEncontrado.peso as UnidadeMedida
       }
     }
-  }
+  },
 )
 
 onMounted(() => {
@@ -129,56 +129,109 @@ onMounted(() => {
 </script>
 
 <template>
-  <main class="container">
-    <!-- Cabeçalho da página -->
-    <div class="page-header">
-      <h2 class="title">Histórico de Movimentações</h2>
-      <button type="button" class="btn-primary" @click="isModalOpen = true">
+  <main class="max-w-300 my-8 mx-auto px-6 py-0 flex flex-col gap-6">
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+      <h2 class="text-gray-900 text-2xl font-semibold border-l-4 border-[#00bf63] pl-2 m-0">
+        Histórico de Movimentações
+      </h2>
+      <button
+        type="button"
+        class="px-3 py-5 bg-[#00bf63] text-white border-none rounded-md font-semibold cursor-pointer text-base transition-colors duration-200 hover:bg-[#01923d]"
+        @click="isModalOpen = true"
+      >
         + Registrar Movimentação
       </button>
     </div>
 
-    <!-- Tabela principal -->
-    <section class="card table-card">
-      <div v-if="movimentacoes.length > 0" class="table-responsive">
-        <table>
+    <section class="bg-white p-7 rounded-lg shadow-[0_2px_4px_rgba(0,0,0,0.08)] w-full">
+      <div v-if="movimentacoes.length > 0" class="overflow-x-auto">
+        <table class="w-full border-collapse text-left text-base">
           <thead>
             <tr>
-              <th>ID</th>
-              <th>Tipo</th>
-              <th>Produto</th>
-              <th>Categoria</th>
-              <th>Qtd.</th>
-              <th>Preço Un.</th>
-              <th>Total Lote</th>
-              <th>Data</th>
+              <th
+                class="text-[#475569] font-semibold px-3 py-3.5 border-b border-gray-200 align-middle"
+              >
+                ID
+              </th>
+              <th
+                class="text-[#475569] font-semibold px-3 py-3.5 border-b border-gray-100 align-middle"
+              >
+                Tipo
+              </th>
+              <th
+                class="text-[#475569] font-semibold px-3 py-3.5 border-b border-gray-200 align-middle"
+              >
+                Produto
+              </th>
+              <th
+                class="text-[#475569] font-semibold px-3 py-3.5 border-b border-gray-200 align-middle"
+              >
+                Categoria
+              </th>
+              <th
+                class="text-[#475569] font-semibold px-3 py-3.5 border-b border-gray-200 align-middle"
+              >
+                Qtd.
+              </th>
+              <th
+                class="text-[#475569] font-semibold px-3 py-3.5 border-b border-gray-200 align-middle"
+              >
+                Preço Un.
+              </th>
+              <th
+                class="text-[#475569] font-semibold px-3 py-3.5 border-b border-gray-200 align-middle"
+              >
+                Total Lote
+              </th>
+              <th
+                class="text-[#475569] font-semibold px-3 py-3.5 border-b border-gray-200 align-middle"
+              >
+                Data
+              </th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="item in movimentacoes" :key="item.id">
-              <td>#{{ item.id }}</td>
-              <td>
-                <span :class="['badge', item.tipo === 'entrada' ? 'badge-in' : 'badge-out']">
+              <td class="px-3 py-3.5 border-b border-gray-200 align-middle">#{{ item.id }}</td>
+              <td class="px-3 py-3.5 border-b border-gray-200 align-middle">
+                <span
+                  :class="[
+                    'inline-block whitespace-nowrap py-1 px-2.5 rounded text-sm font-semibold',
+                    item.tipo === 'entrada'
+                      ? 'bg-green-100 text-[#15803d]'
+                      : 'bg-red-100 text-[#b91c1c]',
+                  ]"
+                >
                   {{ item.tipo.toUpperCase() }}
                 </span>
               </td>
-              <td>
+              <td class="px-3 py-3.5 border-b border-gray-200 align-middle">
                 <strong>{{ getNomeProduto(item.produto_id) }}</strong>
               </td>
-              <td>{{ item.categoriaMovimentacao }}</td>
-              <td :class="item.tipo === 'entrada' ? 'text-in' : 'text-out'">
+              <td class="px-3 py-3.5 border-b border-gray-200 align-middle">
+                {{ item.categoriaMovimentacao }}
+              </td>
+              <td
+                :class="
+                  item.tipo === 'entrada'
+                    ? 'text-[#16a34a] font-semibold'
+                    : 'text-red-600 font-semibold'
+                "
+              >
                 {{ item.tipo === 'entrada' ? '+' : '-' }}{{ item.quantidade }}
                 {{ item.unidadeMedida }}
               </td>
-              <td>{{ item.precoUnitario ? `R$ ${item.precoUnitario.toFixed(2)}` : '-' }}</td>
-              <td>
+              <td class="px-3 py-3.5 border-b border-gray-200 align-middle">
+                {{ item.precoUnitario ? `R$ ${item.precoUnitario.toFixed(2)}` : '-' }}
+              </td>
+              <td class="px-3 py-3.5 border-b border-gray-200 align-middle">
                 {{
                   item.precoUnitario
                     ? `R$ ${(item.quantidade * item.precoUnitario).toFixed(2)}`
                     : '-'
                 }}
               </td>
-              <td>{{ item.data }}</td>
+              <td class="px-3 py-3.5 border-b border-gray-200 align-middle">{{ item.data }}</td>
             </tr>
           </tbody>
         </table>
@@ -186,31 +239,46 @@ onMounted(() => {
       <p v-else class="empty-msg">Nenhuma movimentação registrada.</p>
     </section>
 
-    <!-- Modal com o Formulário -->
     <BaseModal :is-open="isModalOpen" title="Registrar Movimentação" @close="resetForm">
-      <div class="toggle-container">
+      <div class="flex gap-2 mb-5">
         <button
           type="button"
-          :class="['toggle-btn', { active: form.tipo === 'entrada' }]"
+          :class="[
+            'flex-1 p-[0.6rem] border rounded-md font-semibold cursor-pointer transition-all duration-200 ease',
+            form.tipo === 'entrada'
+              ? 'bg-[#00bf63] text-white border-[#00bf63]'
+              : 'bg-gray-200 text-[#64748b] border-gray-300',
+          ]"
           @click="alterarTipo('entrada')"
         >
           + Entrada
         </button>
         <button
           type="button"
-          :class="['toggle-btn', 'btn-out', { active: form.tipo === 'saida' }]"
+          :class="[
+            'flex-1 p-[0.6rem] border rounded-md font-semibold cursor-pointer transition-all duration-200 ease',
+            form.tipo === 'saida'
+              ? 'bg-red-500 text-white border-red-500'
+              : 'bg-gray-200 text-[#64748b] border-gray-300',
+          ]"
           @click="alterarTipo('saida')"
         >
           - Saída
         </button>
       </div>
 
-      <p v-if="erro" class="error-banner">{{ erro }}</p>
+      <p v-if="erro" class="text-red-700 bg-red-100 px-3 py-2 rounded-md text-base">{{ erro }}</p>
 
-      <form class="form-grid" @submit.prevent="salvarMovimentacao">
-        <div class="select-group">
-          <label class="select-label">Produto <span class="required">*</span></label>
-          <select v-model="form.produtoId" required class="select-field">
+      <form class="flex flex-col gap-4" @submit.prevent="salvarMovimentacao">
+        <div class="flex flex-col gap-1.5">
+          <label class="text-sm font-semibold text-[#334155]"
+            >Produto <span class="text-red-500">*</span></label
+          >
+          <select
+            v-model="form.produtoId"
+            required
+            class="p-2.5 border border-gray-300 outline-none text-base bg-white"
+          >
             <option value="" disabled selected>Selecione um produto</option>
             <option v-for="prod in produtos" :key="prod.id" :value="prod.id">
               {{ prod.nome }} (Estoque: {{ prod.quantidadeEstoque }})
@@ -218,7 +286,7 @@ onMounted(() => {
           </select>
         </div>
 
-        <div class="form-row">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
           <BaseSelect
             v-model="form.categoriaMovimentacao"
             label="Origem / Motivo"
@@ -233,7 +301,7 @@ onMounted(() => {
           />
         </div>
 
-        <div class="form-row">
+        <div class="grid grid-cols-2 gap-4">
           <BaseInput
             v-model.number="form.quantidade"
             type="number"
@@ -251,7 +319,7 @@ onMounted(() => {
           />
         </div>
 
-        <div class="form-row">
+        <div class="grid grid-cols-2 gap-4">
           <BaseInput v-model="form.data" type="date" label="Data" required />
           <BaseInput
             v-if="form.tipo === 'entrada'"
@@ -261,11 +329,19 @@ onMounted(() => {
           />
         </div>
 
-        <button type="submit" class="btn-submit" :disabled="carregando || estoqueInsuficiente">
+        <button
+          type="submit"
+          class="mt-2 p-3 bg-[#00bf63] text-white border-none rounded-md font-semibold cursor-pointer transition-colors duration-200 hover:bg-[#01923d] disabled:bg-[#94a3b8] disabled:cursor-not-allowed"
+          :disabled="carregando || estoqueInsuficiente"
+        >
           {{ carregando ? 'Processando...' : 'Registrar Movimentação' }}
         </button>
 
-        <p v-if="estoqueInsuficiente" class="error-banner" style="margin-top: 0.5rem">
+        <p
+          v-if="estoqueInsuficiente"
+          class="text-red-600 bg-red-100 rounded-md text-base py-2 px-3"
+          style="margin-top: 0.5rem"
+        >
           Quantidade informada é maior que o estoque atual ({{
             produtoSelecionado?.quantidadeEstoque
           }}).
@@ -274,224 +350,3 @@ onMounted(() => {
     </BaseModal>
   </main>
 </template>
-
-<style scoped>
-.container {
-  max-width: 1200px;
-  margin: 2rem auto;
-  padding: 0 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.title {
-  color: #121212;
-  font-size: 1.5rem;
-  font-weight: 600;
-  border-left: 4px solid #00bf63;
-  padding-left: 0.5rem;
-  margin: 0;
-}
-
-.card {
-  background: #ffffff;
-  padding: 1.75rem;
-  border-radius: 0.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-}
-
-.table-card {
-  width: 100%;
-}
-
-.btn-primary {
-  padding: 0.75rem 1.25rem;
-  background-color: #00bf63;
-  color: #fff;
-  border: none;
-  border-radius: 0.375rem;
-  font-weight: 600;
-  font-size: 0.95rem;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.btn-primary:hover {
-  background-color: #01923d;
-}
-
-.toggle-container {
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1.25rem;
-}
-
-.toggle-btn {
-  flex: 1;
-  padding: 0.6rem;
-  border: 1px solid #d4d4d4;
-  background: #f8fafc;
-  cursor: pointer;
-  border-radius: 0.375rem;
-  font-weight: 600;
-  color: #64748b;
-  transition: all 0.2s ease;
-}
-
-.toggle-btn.active {
-  background-color: #00bf63;
-  color: #ffffff;
-  border-color: #00bf63;
-}
-
-.toggle-btn.btn-out.active {
-  background-color: #ef4444;
-  color: #ffffff;
-  border-color: #ef4444;
-}
-
-.form-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-}
-
-.select-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.375rem;
-}
-
-.select-label {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #334155;
-}
-
-.required {
-  color: #ef4444;
-}
-
-.select-field {
-  padding: 0.625rem;
-  border: 1px solid #d4d4d4;
-  border-radius: 0.375rem;
-  outline: none;
-  font-size: 0.95rem;
-  background-color: #fff;
-}
-
-.btn-submit {
-  margin-top: 0.5rem;
-  padding: 0.75rem;
-  background-color: #00bf63;
-  color: #ffffff;
-  border: none;
-  border-radius: 0.375rem;
-  font-weight: 600;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.btn-submit:hover {
-  background-color: #01923d;
-}
-
-.btn-submit:disabled {
-  background-color: #94a3b8;
-  cursor: not-allowed;
-}
-
-.table-responsive {
-  overflow-x: auto;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: left;
-  font-size: 0.9rem;
-}
-
-th,
-td {
-  padding: 0.875rem 0.75rem;
-  border-bottom: 1px solid #e2e8f0;
-  vertical-align: middle;
-}
-
-th {
-  color: #475569;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.badge {
-  display: inline-block;
-  white-space: nowrap;
-  padding: 0.25rem 0.6rem;
-  border-radius: 0.25rem;
-  font-size: 0.75rem;
-  font-weight: bold;
-}
-
-.badge-in {
-  background-color: #dcfce7;
-  color: #15803d;
-}
-
-.badge-out {
-  background-color: #fee2e2;
-  color: #b91c1c;
-}
-
-.text-in {
-  color: #16a34a;
-  font-weight: 600;
-}
-
-.text-out {
-  color: #dc2626;
-  font-weight: 600;
-}
-
-.error-banner {
-  color: #b91c1c;
-  background: #fee2e2;
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.375rem;
-  font-size: 0.9rem;
-}
-
-.empty-msg {
-  color: #64748b;
-  font-size: 0.9rem;
-  text-align: center;
-  padding: 1rem 0;
-}
-
-@media (max-width: 640px) {
-  .form-row {
-    grid-template-columns: 1fr;
-  }
-  .page-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
-  }
-}
-</style>

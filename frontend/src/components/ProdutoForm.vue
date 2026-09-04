@@ -20,14 +20,16 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <section class="card">
-    <h2 class="title">{{ isEditing ? 'Editar Produto' : 'Cadastro de Produtos' }}</h2>
+  <section class="bg-white p-6 rounded-lg shadow-[0_2px_4px_rgba(0,0,0,0.08)]">
+    <h2 class="text-black text-xl font-semibold mb-5 border-l-4 border-[#00bf63] pl-2">
+      {{ isEditing ? 'Editar Produto' : 'Cadastro de Produtos' }}
+    </h2>
 
-    <form class="form-grid" @submit.prevent="emit('salvar')">
+    <form class="flex flex-col gap-4 w-full" @submit.prevent="emit('salvar')">
       <BaseInput v-model="form.nome" label="Nome do Produto" required />
       <BaseInput v-model="form.descricao" label="Descrição" required />
 
-      <div class="form-row">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
         <BaseSelect v-model="form.categoria" label="Categoria" :options="categorias" required />
         <BaseSelect
           v-model="form.peso"
@@ -37,7 +39,7 @@ const emit = defineEmits<{
         />
       </div>
 
-      <div class="form-row">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
         <BaseInput
           v-model.number="form.precoUnidade"
           type="number"
@@ -60,102 +62,14 @@ const emit = defineEmits<{
         required
       />
 
-      <div class="actions">
-        <button type="submit" class="btn-primary">
+      <div class="flex gap-2 mt-2 w-full">
+        <button type="submit" class="flex-1 py-3 bg-[#00bf63] text-white border-none rounded-md font-semibold text-base cursor-pointer transition-colors duration-200 hover:bg-[#01923d] hover:text-white">
           {{ isEditing ? 'Atualizar Produto' : 'Cadastrar Produto' }}
         </button>
-        <button v-if="isEditing" type="button" class="btn-secondary" @click="emit('cancelar')">
+        <button v-if="isEditing" type="button" class="py-3 px-4 bg-[#64748b] border-none rounded-md font-semibold cursor-pointer" @click="emit('cancelar')">
           Cancelar
         </button>
       </div>
     </form>
   </section>
 </template>
-
-<style scoped>
-.container {
-  max-width: 900px;
-  margin: 2rem auto;
-  padding: 0 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.card {
-  background: #ffffff;
-  padding: 1.5rem;
-  border-radius: 0.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-}
-
-.title {
-  color: #121212;
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin-bottom: 1.25rem;
-  border-left: 4px solid #00bf63;
-  padding-left: 0.5rem;
-}
-
-.subtitle {
-  color: #121212;
-  font-size: 1.1rem;
-  margin-bottom: 1rem;
-}
-
-.form-grid {
-  display: flex;
-  flex-direction: column;
-}
-
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-}
-
-.actions {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
-}
-
-.btn-primary {
-  flex: 1;
-  padding: 0.75rem;
-  background-color: #00bf63;
-  color: #121212;
-  border: none;
-  border-radius: 0.375rem;
-  font-weight: 600;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.btn-primary:hover {
-  background-color: #01923d;
-  color: #ffffff;
-}
-
-.btn-secondary {
-  padding: 0.75rem 1rem;
-  background-color: #64748b;
-  color: #ffffff;
-  border: none;
-  border-radius: 0.375rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.table-responsive {
-  overflow-x: auto;
-}
-
-@media (max-width: 640px) {
-  .form-row {
-    grid-template-columns: 1fr;
-  }
-}
-</style>
