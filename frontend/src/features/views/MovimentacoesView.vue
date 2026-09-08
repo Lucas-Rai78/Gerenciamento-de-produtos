@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
 import type { Produto, UnidadeMedida } from '@/features/types/produto'
-import { produtoService } from '@/services/produtoService'
-import { movimentacaoService, type Movimentacao } from '@/services/movimentacaoService'
-import BaseInput from '@/components/BaseInput.vue'
-import BaseSelect from '@/components/BaseSelect.vue'
-import BaseModal from '@/components/BaseModal.vue'
+import { produtoService } from '@/features/services/produtoService'
+import { movimentacaoService, type Movimentacao } from '@/features/services/movimentacaoService'
+import BaseInput from '@/shared/components/BaseInput.vue'
+import BaseSelect from '@/shared/components/BaseSelect.vue'
+import BaseModal from '@/shared/components/BaseModal.vue'
 
 const unidadesMedida: UnidadeMedida[] = ['g', 'kg', 'mL', 'L']
 const opcoesEntrada = ['compra', 'producao']
@@ -331,7 +331,7 @@ onMounted(() => {
 
         <button
           type="submit"
-          class="mt-2 p-3 bg-[#00bf63] text-white border-none rounded-md font-semibold cursor-pointer transition-colors duration-200 hover:bg-[#01923d] disabled:bg-[#94a3b8] disabled:cursor-not-allowed"
+          class="mt-2 py-3 px-5 bg-[#00bf63] text-white border-none rounded-md font-semibold cursor-pointer transition-colors duration-200 hover:bg-[#01923d] disabled:bg-[#94a3b8] disabled:cursor-not-allowed"
           :disabled="carregando || estoqueInsuficiente"
         >
           {{ carregando ? 'Processando...' : 'Registrar Movimentação' }}

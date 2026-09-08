@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { ProdutoCreate, Categoria, UnidadeMedida } from '@/features/types/produto'
-import BaseInput from '@/components/BaseInput.vue'
-import BaseSelect from '@/components/BaseSelect.vue'
+import BaseInput from '@/shared/components/BaseInput.vue'
+import BaseSelect from '@/shared/components/BaseSelect.vue'
 
 interface Props {
   isEditing: boolean
