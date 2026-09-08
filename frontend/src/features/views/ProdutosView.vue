@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import type { Produto, ProdutoCreate, Categoria, UnidadeMedida } from '@/types/produto'
-import { produtoService } from '@/services/produtoService'
-import BaseModal from '@/components/BaseModal.vue'
-import ProdutoForm from '@/components/ProdutoForm.vue'
-import ProdutoTable from '@/components/ProdutoTable.vue'
+import type { Produto, ProdutoCreate, Categoria, UnidadeMedida } from '@/features/types/produto'
+import { produtoService } from '@/features/services/produtoService'
+import BaseModal from '@/shared/components/BaseModal.vue'
+import ProdutoForm from '@/shared/components/ProdutoForm.vue'
+import ProdutoTable from '@/shared/components/ProdutoTable.vue'
 
 const categorias: Categoria[] = ['não perecíveis', 'frezer', 'hortifruti', 'embalagens', 'bebidas']
 const unidadesMedida: UnidadeMedida[] = ['g', 'kg', 'mL', 'L']
@@ -101,8 +101,8 @@ onMounted(() => {
 <template>
   <main class="max-w-300 mx-auto my-8 px-6 flex flex-col gap-6">
     <div class="flex justify-between items-center flex-wrap gap-4">
-    <h2 class="text-[#121212] text-2xl font-semibold border-l-4 border-[#00bf63] pl-2">
-      Cadastro de Produtos
+      <h2 class="text-[#121212] text-2xl font-semibold border-l-4 border-[#00bf63] pl-2">
+        Cadastro de Produtos
       </h2>
       <button
         type="button"
