@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Produto } from '@/types/produto'
+import type { Produto } from '@/features/types/produto'
 
 defineProps<{
   produtos: Produto[]
@@ -26,8 +26,12 @@ const emit = defineEmits<{
           <tr class="text-[#475569] font-semibold">
             <th class="py-3 px-2 border-b border-gray-200 text-[#475569] font-semibold">ID</th>
             <th class="py-3 px-2 border-b border-gray-200 text-[#475569] font-semibold">Nome</th>
-            <th class="py-3 px-2 border-b border-gray-200 text-[#475569] font-semibold">Categoria</th>
-            <th class="py-3 px-2 border-b border-gray-200 text-[#475569] font-semibold">Preço Un.</th>
+            <th class="py-3 px-2 border-b border-gray-200 text-[#475569] font-semibold">
+              Categoria
+            </th>
+            <th class="py-3 px-2 border-b border-gray-200 text-[#475569] font-semibold">
+              Preço Un.
+            </th>
             <th class="py-3 px-2 border-b border-gray-200 text-[#475569] font-semibold">Estoque</th>
             <th class="py-3 px-2 border-b border-gray-200 text-[#475569] font-semibold">Medida</th>
             <th class="py-3 px-2 border-b border-gray-200 text-[#475569] font-semibold">Ações</th>
@@ -41,14 +45,20 @@ const emit = defineEmits<{
               <span class="block text-[0.75rem] text-[#64748b]">{{ prod.descricao }}</span>
             </td>
             <td class="py-3 px-2 border-b border-gray-200">
-              <span class="inline-block bg-gray-200 text-gray-900 px-2 py-0.5 rounded text-sm font-medium">
+              <span
+                class="inline-block bg-gray-200 text-gray-900 px-2 py-0.5 rounded text-sm font-medium"
+              >
                 {{ prod.categoria }}
               </span>
             </td>
-            <td class="py-3 px-2 border-b border-gray-200">R$ {{ prod.precoUnidade.toFixed(2) }}</td>
+            <td class="py-3 px-2 border-b border-gray-200">
+              R$ {{ prod.precoUnidade.toFixed(2) }}
+            </td>
             <td
               class="py-3 px-2 border-b border-gray-200"
-              :class="{ 'text-red-500 font-semibold': prod.quantidadeEstoque <= prod.estoqueMinimo }"
+              :class="{
+                'text-red-500 font-semibold': prod.quantidadeEstoque <= prod.estoqueMinimo,
+              }"
             >
               {{ prod.quantidadeEstoque }}
             </td>

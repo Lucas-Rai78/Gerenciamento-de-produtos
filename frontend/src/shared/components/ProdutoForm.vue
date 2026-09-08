@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ProdutoCreate, Categoria, UnidadeMedida } from '@/types/produto'
+import type { ProdutoCreate, Categoria, UnidadeMedida } from '@/features/types/produto'
 import BaseInput from '@/components/BaseInput.vue'
 import BaseSelect from '@/components/BaseSelect.vue'
 
@@ -63,10 +63,18 @@ const emit = defineEmits<{
       />
 
       <div class="flex gap-2 mt-2 w-full">
-        <button type="submit" class="flex-1 py-3 bg-[#00bf63] text-white border-none rounded-md font-semibold text-base cursor-pointer transition-colors duration-200 hover:bg-[#01923d] hover:text-white">
+        <button
+          type="submit"
+          class="flex-1 py-3 bg-[#00bf63] text-white border-none rounded-md font-semibold text-base cursor-pointer transition-colors duration-200 hover:bg-[#01923d] hover:text-white"
+        >
           {{ isEditing ? 'Atualizar Produto' : 'Cadastrar Produto' }}
         </button>
-        <button v-if="isEditing" type="button" class="py-3 px-4 bg-[#64748b] border-none rounded-md font-semibold cursor-pointer" @click="emit('cancelar')">
+        <button
+          v-if="isEditing"
+          type="button"
+          class="py-3 px-4 bg-[#64748b] border-none rounded-md font-semibold cursor-pointer"
+          @click="emit('cancelar')"
+        >
           Cancelar
         </button>
       </div>

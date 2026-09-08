@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
-import type { Produto, UnidadeMedida } from '@/types/produto'
+import type { Produto, UnidadeMedida } from '@/features/types/produto'
 import { produtoService } from '@/services/produtoService'
 import { movimentacaoService, type Movimentacao } from '@/services/movimentacaoService'
 import BaseInput from '@/components/BaseInput.vue'

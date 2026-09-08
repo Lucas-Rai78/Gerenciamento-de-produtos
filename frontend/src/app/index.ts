@@ -8,11 +8,11 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/produtos',
     name: 'Produtos',
-    component: () => import('@/views/ProdutosView.vue'),
+    component: () => import('@/features/views/ProdutosView.vue'),
   },
   { path: '/movimentacoes',
     name: 'movimentacoes',
-    component:() => import('@/views/MovimentacoesView.vue')},
+    component:() => import('@/features/views/MovimentacoesView.vue')},
 ]
 
 const router = createRouter({
