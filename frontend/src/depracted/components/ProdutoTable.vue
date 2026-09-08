@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Produto } from '@/types/produto'
+import type { Produto } from '@/depracted/types/produto'
 
 defineProps<{
   produtos: Produto[]

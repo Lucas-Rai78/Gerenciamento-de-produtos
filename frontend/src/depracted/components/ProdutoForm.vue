@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ProdutoCreate, Categoria, UnidadeMedida } from '@/types/produto'
+import type { ProdutoCreate, Categoria, UnidadeMedida } from '@/depracted/types/produto'
 import BaseInput from '@/components/BaseInput.vue'
 import BaseSelect from '@/components/BaseSelect.vue'
 
