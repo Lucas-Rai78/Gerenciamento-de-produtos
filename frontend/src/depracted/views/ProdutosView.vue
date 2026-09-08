@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import type { Produto, ProdutoCreate, Categoria, UnidadeMedida } from '@/types/produto'
-import { produtoService } from '@/services/produtoService'
+import type { Produto, ProdutoCreate, Categoria, UnidadeMedida } from '@/depracted/types/produto'
+import { produtoService } from '@/depracted/services/produtoService'
 import BaseModal from '@/components/BaseModal.vue'
 import ProdutoForm from '@/components/ProdutoForm.vue'
 import ProdutoTable from '@/components/ProdutoTable.vue'

@@ -1,10 +1,12 @@
+from backend.app.deprecated import crud, models
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from typing import List
 
-from app import schemas, crud, models
-from app.database import engine, get_db
+from backend.app.deprecated import schemas
+from backend.app.deprecated.database import engine, get_db
+from backend.app.deprecated.service import produtos as produtos_service
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -29,10 +31,7 @@ def listar_produtos(db: Session = Depends(get_db)):
 
 @app.get("/produtos/{produto_id}", response_model=schemas.ProdutoResponse)
 def obter_produto(produto_id: int, db: Session = Depends(get_db)):
-    db_produto = crud.get_produto_by_id(db=db, produto_id=produto_id)
-    if not db_produto:
-        raise HTTPException(status_code=404, detail="Produto não encontrado")
-    return db_produto
+    return produtos_service.get_produtos()
 
 @app.put("/produtos/{produto_id}", response_model=schemas.ProdutoResponse)
 def atualizar_produto(produto_id: int, dados: schemas.ProdutoCreate, db: Session = Depends(get_db)):

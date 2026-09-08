@@ -1,6 +1,7 @@
+from backend.app.deprecated import models
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
-from app import schemas, models
+from backend.app.deprecated import schemas
 
 # --- PRODUTOS ---
 def get_produtos(db: Session):

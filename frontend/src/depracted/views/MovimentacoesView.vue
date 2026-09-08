@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
-import type { Produto, UnidadeMedida } from '@/types/produto'
-import { produtoService } from '@/services/produtoService'
-import { movimentacaoService, type Movimentacao } from '@/services/movimentacaoService'
+import type { Produto, UnidadeMedida } from '@/depracted/types/produto'
+import { produtoService } from '@/depracted/services/produtoService'
+import { movimentacaoService, type Movimentacao } from '@/depracted/services/movimentacaoService'
 import BaseInput from '@/components/BaseInput.vue'
 import BaseSelect from '@/components/BaseSelect.vue'
 import BaseModal from '@/components/BaseModal.vue'
