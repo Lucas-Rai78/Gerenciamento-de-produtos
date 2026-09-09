@@ -3,8 +3,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from typing import List
 
-from app import schemas, crud, models
-from app.database import engine, get_db
+from app.database.database import engine, get_db
+from app.modules.models import models
+from app.modules.schemas import schemas
+from app.modules.service import crud
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -18,12 +20,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# --- PRODUTOS ---
-@app.post("/produtos/", response_model=schemas.ProdutoResponse, status_code=201)
+@app.post("/produtos", response_model=schemas.ProdutoResponse, status_code=201)
 def criar_produto(produto: schemas.ProdutoCreate, db: Session = Depends(get_db)):
     return crud.create_produto(db=db, produto=produto)
 
-@app.get("/produtos/", response_model=List[schemas.ProdutoResponse])
+@app.get("/produtos", response_model=List[schemas.ProdutoResponse])
 def listar_produtos(db: Session = Depends(get_db)):
     return crud.get_produtos(db=db)
 
@@ -48,11 +49,10 @@ def deletar_produto(produto_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Produto não encontrado")
     return {"mensagem": "Produto removido com sucesso"}
 
-# --- MOVIMENTAÇÕES ---
-@app.post("/movimentacoes/", response_model=schemas.MovimentacaoResponse, status_code=201)
+@app.post("/movimentacoes", response_model=schemas.MovimentacaoResponse, status_code=201)
 def registrar_movimentacao(mov: schemas.MovimentacaoCreate, db: Session = Depends(get_db)):
     return crud.create_movimentacao(db=db, mov=mov)
 
-@app.get("/movimentacoes/", response_model=List[schemas.MovimentacaoResponse])
+@app.get("/movimentacoes", response_model=List[schemas.MovimentacaoResponse])
 def listar_movimentacoes(db: Session = Depends(get_db)):
     return crud.get_movimentacoes(db=db)

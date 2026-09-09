@@ -14,13 +14,13 @@ export interface Movimentacao {
 
 export const movimentacaoService = {
   async listar(): Promise<Movimentacao[]> {
-    const res = await fetch(`${API_BASE}/movimentacoes/`);
+    const res = await fetch(`${API_BASE}/movimentacoes`);
     if (!res.ok) throw new Error('Erro ao buscar movimentações');
     return res.json();
   },
 
   async criar(movimentacao: Movimentacao): Promise<Movimentacao> {
-    const res = await fetch(`${API_BASE}/movimentacoes/`, {
+    const res = await fetch(`${API_BASE}/movimentacoes`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(movimentacao),

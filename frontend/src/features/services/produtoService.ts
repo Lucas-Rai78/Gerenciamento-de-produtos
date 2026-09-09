@@ -4,7 +4,7 @@ const API_BASE = 'http://127.0.0.1:8000'
 
 export const produtoService = {
   async listar(): Promise<Produto[]> {
-    const response = await fetch(`${API_BASE}/produtos/`)
+    const response = await fetch(`${API_BASE}/produtos`)
     if (!response.ok) throw new Error('Erro ao buscar produtos')
     return response.json()
   },
@@ -16,7 +16,7 @@ export const produtoService = {
   },
 
   async criar(produto: ProdutoCreate): Promise<Produto> {
-    const response = await fetch(`${API_BASE}/produtos/`, {
+    const response = await fetch(`${API_BASE}/produtos`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(produto),

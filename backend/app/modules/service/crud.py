@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
-from app import schemas, models
+from app.modules.models import models
+from app.modules.schemas import schemas
 
 # --- PRODUTOS ---
 def get_produtos(db: Session):
@@ -37,7 +38,7 @@ def delete_produto(db: Session, produto_id: int):
         db.commit()
     return db_produto
 
-# --- MOVIMENTAÇÕES (UNIFICADO) ---
+# --- MOVIMENTAÇÕES ---
 def create_movimentacao(db: Session, mov: schemas.MovimentacaoCreate):
     produto = get_produto_by_id(db, mov.produto_id)
     if not produto:

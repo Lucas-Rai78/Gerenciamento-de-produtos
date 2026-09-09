@@ -225,11 +225,7 @@ onMounted(() => {
                 {{ item.precoUnitario ? `R$ ${item.precoUnitario.toFixed(2)}` : '-' }}
               </td>
               <td class="px-3 py-3.5 border-b border-gray-200 align-middle">
-                {{
-                  item.precoUnitario
-                    ? `R$ ${(item.quantidade * item.precoUnitario).toFixed(2)}`
-                    : '-'
-                }}
+                {{ item.precoUnitario ? `R$ ${(item.quantidade * item.precoUnitario).toFixed(2)}` : '-' }}
               </td>
               <td class="px-3 py-3.5 border-b border-gray-200 align-middle">{{ item.data }}</td>
             </tr>
