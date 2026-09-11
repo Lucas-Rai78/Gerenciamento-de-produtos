@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 from app.modules.models import models
-from backend.schemas import schemas
+from app.modules.schemas import schemas
 
 # --- PRODUTOS ---
 

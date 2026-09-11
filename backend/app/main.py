@@ -5,7 +5,7 @@ from typing import List
 
 from app.database.database import engine, get_db
 from app.modules.models import models
-from backend.schemas import schemas
+from app.modules.schemas import schemas
 from app.modules.service import crud
 
 models.Base.metadata.create_all(bind=engine)

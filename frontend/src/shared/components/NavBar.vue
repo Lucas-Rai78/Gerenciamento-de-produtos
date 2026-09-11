@@ -1,22 +1,7 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { useNavbar } from '@/shared/composables/useNavBar'
 
-interface NavRoute {
-  name: string
-  path: string
-  label: string
-}
-
-const routes: NavRoute[] = [
-  { name: 'produtos', path: '/produtos', label: 'Produtos' },
-  { name: 'movimentacoes', path: '/movimentacoes', label: 'Movimentações' },
-]
-
-const menuAberto = ref<boolean>(false)
-
-function toggleMenu(): void {
-  menuAberto.value = !menuAberto.value
-}
+const { routes, menuAberto, toggleMenu, fecharMenu } = useNavbar()
 </script>
 
 <template>
@@ -34,7 +19,7 @@ function toggleMenu(): void {
         :to="route.path"
         class="text-gray-900 decoration-none px-3.5! py-2! text-base font-semibold transition-all ease-in-out duration-200 hover:text-white"
         active-class="text-white "
-        @click="menuAberto = false"
+        @click="fecharMenu"
       >
         {{ route.label }}
       </router-link>

@@ -1,4 +1,4 @@
-import type { Produto, ProdutoCreate } from '@/features/types/produto'
+import type { Produto, ProdutoCreate } from '@/produto_modules/types/produto'
 
 const API_BASE = 'http://127.0.0.1:8000'
 

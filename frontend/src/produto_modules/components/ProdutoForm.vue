@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import type { ProdutoCreate, Categoria, UnidadeMedida } from '@/features/types/produto'
+import type { ProdutoCreate, Categoria, UnidadeMedida } from '@/produto_modules/types/produto'
 import BaseInput from '@/shared/components/BaseInput.vue'
 import BaseSelect from '@/shared/components/BaseSelect.vue'
+import { useProdutoForm } from '@/produto_modules/composables/useProdutoForm'
 
 interface Props {
   isEditing: boolean
@@ -17,6 +18,8 @@ const emit = defineEmits<{
   (e: 'salvar'): void
   (e: 'cancelar'): void
 }>()
+
+const { onSalvar, onCancelar } = useProdutoForm(emit)
 </script>
 
 <template>
@@ -25,7 +28,7 @@ const emit = defineEmits<{
       {{ isEditing ? 'Editar Produto' : 'Cadastro de Produtos' }}
     </h2>
 
-    <form class="flex flex-col gap-4 w-full" @submit.prevent="emit('salvar')">
+    <form class="flex flex-col gap-4 w-full" @submit.prevent="onSalvar">
       <BaseInput v-model="form.nome" label="Nome do Produto" required />
       <BaseInput v-model="form.descricao" label="Descrição" required />
 
@@ -73,7 +76,7 @@ const emit = defineEmits<{
           v-if="isEditing"
           type="button"
           class="py-3 px-4 bg-[#64748b] border-none rounded-md font-semibold cursor-pointer"
-          @click="emit('cancelar')"
+          @click="onCancelar"
         >
           Cancelar
         </button>

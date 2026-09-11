@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import type { Produto } from '@/features/types/produto'
+import type { Produto } from '@/produto_modules/types/produto'
+import { useProdutoTable } from '@/produto_modules/composables/useProdutoTable'
 
 defineProps<{
   produtos: Produto[]
@@ -10,6 +11,8 @@ const emit = defineEmits<{
   (e: 'editar', produto: Produto): void
   (e: 'excluir', id: number): void
 }>()
+
+const { onEditar, onExcluir } = useProdutoTable(emit)
 </script>
 
 <template>
@@ -68,14 +71,14 @@ const emit = defineEmits<{
                 <button
                   class="bg-transparent border-2 border-orange-400 text-orange-400 hover:bg-orange-400 hover:text-white rounded cursor-pointer px-2! py-1! text-base shadow-[0_2px_4px_rgba(0,0,0,0.08)] transition-all duration-150 font-medium"
                   title="Editar"
-                  @click="emit('editar', prod)"
+                  @click="onEditar(prod)"
                 >
                   Editar
                 </button>
                 <button
                   class="bg-transparent border-2 text-red-600 border-red-600 hover:bg-red-600 hover:text-white rounded cursor-pointer px-2! py-1! text-base shadow-[0_2px_4px_rgba(0,0,0,0.08)] transition-all duration-150 font-medium"
                   title="Excluir"
-                  @click="emit('excluir', prod.id)"
+                  @click="onExcluir(prod.id)"
                 >
                   Excluir
                 </button>

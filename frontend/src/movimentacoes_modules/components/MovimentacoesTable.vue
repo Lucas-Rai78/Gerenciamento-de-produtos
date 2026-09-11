@@ -1,16 +1,14 @@
 <script setup lang="ts">
-import type { Movimentacao } from '@/features/services/movimentacaoService'
-import type { Produto } from '@/features/types/produto'
+import type { Movimentacao } from '@/movimentacoes_modules/services/movimentacaoService'
+import type { Produto } from '@/produto_modules/types/produto'
+import { useMovimentacoesTable } from '@/movimentacoes_modules/composables/useMovimentacoesTable'
 
 const props = defineProps<{
   movimentacoes: Movimentacao[]
   produtos: Produto[]
 }>()
 
-function getNomeProduto(produtoId: number): string {
-  const prod = props.produtos.find((p) => p.id === produtoId)
-  return prod ? prod.nome : `Produto #${produtoId}`
-}
+const { getNomeProduto } = useMovimentacoesTable(props)
 </script>
 
 <template>
@@ -19,14 +17,46 @@ function getNomeProduto(produtoId: number): string {
       <table class="w-full border-collapse text-left text-base">
         <thead>
           <tr>
-            <th class="text-[#475569] font-semibold px-3 py-3.5 border-b border-gray-200 align-middle">ID</th>
-            <th class="text-[#475569] font-semibold px-3 py-3.5 border-b border-gray-200 align-middle">Tipo</th>
-            <th class="text-[#475569] font-semibold px-3 py-3.5 border-b border-gray-200 align-middle">Produto</th>
-            <th class="text-[#475569] font-semibold px-3 py-3.5 border-b border-gray-200 align-middle">Categoria</th>
-            <th class="text-[#475569] font-semibold px-3 py-3.5 border-b border-gray-200 align-middle">Qtd.</th>
-            <th class="text-[#475569] font-semibold px-3 py-3.5 border-b border-gray-200 align-middle">Preço Un.</th>
-            <th class="text-[#475569] font-semibold px-3 py-3.5 border-b border-gray-200 align-middle">Total Lote</th>
-            <th class="text-[#475569] font-semibold px-3 py-3.5 border-b border-gray-200 align-middle">Data</th>
+            <th
+              class="text-[#475569] font-semibold px-3 py-3.5 border-b border-gray-200 align-middle"
+            >
+              ID
+            </th>
+            <th
+              class="text-[#475569] font-semibold px-3 py-3.5 border-b border-gray-200 align-middle"
+            >
+              Tipo
+            </th>
+            <th
+              class="text-[#475569] font-semibold px-3 py-3.5 border-b border-gray-200 align-middle"
+            >
+              Produto
+            </th>
+            <th
+              class="text-[#475569] font-semibold px-3 py-3.5 border-b border-gray-200 align-middle"
+            >
+              Categoria
+            </th>
+            <th
+              class="text-[#475569] font-semibold px-3 py-3.5 border-b border-gray-200 align-middle"
+            >
+              Qtd.
+            </th>
+            <th
+              class="text-[#475569] font-semibold px-3 py-3.5 border-b border-gray-200 align-middle"
+            >
+              Preço Un.
+            </th>
+            <th
+              class="text-[#475569] font-semibold px-3 py-3.5 border-b border-gray-200 align-middle"
+            >
+              Total Lote
+            </th>
+            <th
+              class="text-[#475569] font-semibold px-3 py-3.5 border-b border-gray-200 align-middle"
+            >
+              Data
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -64,7 +94,9 @@ function getNomeProduto(produtoId: number): string {
               {{ item.precoUnitario ? `R$ ${item.precoUnitario.toFixed(2)}` : '-' }}
             </td>
             <td class="px-3 py-3.5 border-b border-gray-200 align-middle">
-              {{ item.precoUnitario ? `R$ ${(item.quantidade * item.precoUnitario).toFixed(2)}` : '-' }}
+              {{
+                item.precoUnitario ? `R$ ${(item.quantidade * item.precoUnitario).toFixed(2)}` : '-'
+              }}
             </td>
             <td class="px-3 py-3.5 border-b border-gray-200 align-middle">{{ item.data }}</td>
           </tr>

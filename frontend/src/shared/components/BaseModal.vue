@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted } from 'vue'
+import { useEscapeKey } from '@/shared/composables/useEscapeKey'
 
 defineProps<{
   isOpen: boolean
@@ -10,14 +10,7 @@ const emit = defineEmits<{
   (e: 'close'): void
 }>()
 
-function handleKeyDown(event: KeyboardEvent) {
-  if (event.key === 'Escape') {
-    emit('close')
-  }
-}
-
-onMounted(() => window.addEventListener('keydown', handleKeyDown))
-onUnmounted(() => window.removeEventListener('keydown', handleKeyDown))
+useEscapeKey(() => emit('close'))
 </script>
 
 <template>

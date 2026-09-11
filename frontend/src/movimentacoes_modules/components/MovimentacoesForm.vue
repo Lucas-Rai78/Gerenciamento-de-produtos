@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
-import type { Produto, UnidadeMedida } from '@/features/types/produto'
-import type { Movimentacao } from '@/features/services/movimentacaoService'
+import type { Produto } from '@/produto_modules/types/produto'
+import type { Movimentacao } from '@/movimentacoes_modules/services/movimentacaoService'
+import { useMovimentacaoForm } from '@/movimentacoes_modules/composables/useMovimentacoesForm'
 import BaseInput from '@/shared/components/BaseInput.vue'
 import BaseSelect from '@/shared/components/BaseSelect.vue'
 import BaseModal from '@/shared/components/BaseModal.vue'
@@ -18,95 +18,16 @@ const emit = defineEmits<{
   (e: 'salvar', dados: Omit<Movimentacao, 'id'>): void
 }>()
 
-const unidadesMedida: UnidadeMedida[] = ['g', 'kg', 'mL', 'L']
-const opcoesEntrada = ['compra', 'producao']
-const opcoesSaida = ['venda', 'descarte', 'producao']
-
-const form = ref({
-  produtoId: '',
-  tipo: 'entrada' as 'entrada' | 'saida',
-  categoriaMovimentacao: 'compra',
-  unidadeMedida: 'kg',
-  quantidade: 1,
-  precoUnitario: 0,
-  data: new Date().toISOString().split('T')[0] ?? '',
-  validade: '',
-})
-
-const categoriasDisponiveis = computed(() => {
-  return form.value.tipo === 'entrada' ? opcoesEntrada : opcoesSaida
-})
-
-const produtoSelecionado = computed(() => {
-  return props.produtos.find((p) => p.id === Number(form.value.produtoId))
-})
-
-const estoqueInsuficiente = computed(() => {
-  if (form.value.tipo !== 'saida' || !produtoSelecionado.value) return false
-  return form.value.quantidade > produtoSelecionado.value.quantidadeEstoque
-})
-
-function alterarTipo(novoTipo: 'entrada' | 'saida') {
-  form.value.tipo = novoTipo
-  form.value.categoriaMovimentacao = novoTipo === 'entrada' ? 'compra' : 'venda'
-}
-
-function resetForm() {
-  form.value = {
-    produtoId: '',
-    tipo: 'entrada',
-    categoriaMovimentacao: 'compra',
-    unidadeMedida: 'kg',
-    quantidade: 1,
-    precoUnitario: 0,
-    data: new Date().toISOString().split('T')[0] ?? '',
-    validade: '',
-  }
-}
-
-function fecharModal() {
-  resetForm()
-  emit('close')
-}
-
-function handleSubmit() {
-  emit('salvar', {
-    produto_id: Number(form.value.produtoId),
-    tipo: form.value.tipo,
-    categoriaMovimentacao: form.value.categoriaMovimentacao,
-    unidadeMedida: form.value.unidadeMedida,
-    quantidade: form.value.quantidade,
-    precoUnitario: form.value.precoUnitario,
-    data: form.value.data,
-    validade: form.value.tipo === 'entrada' ? form.value.validade || null : null,
-  })
-}
-
-watch(
-  () => form.value.produtoId,
-  (novoId) => {
-    if (!novoId) return
-    const produtoEncontrado = props.produtos.find((p) => p.id === Number(novoId))
-
-    if (produtoEncontrado) {
-      if (typeof produtoEncontrado.precoUnidade === 'number') {
-        form.value.precoUnitario = produtoEncontrado.precoUnidade
-      }
-      if (
-        produtoEncontrado.peso &&
-        unidadesMedida.includes(produtoEncontrado.peso as UnidadeMedida)
-      ) {
-        form.value.unidadeMedida = produtoEncontrado.peso as UnidadeMedida
-      }
-    }
-  },
-)
-
-watch(() => props.isOpen, (novoEstado) => {
-  if (!novoEstado) {
-    resetForm()
-  }
-})
+const {
+  form,
+  unidadesMedida,
+  categoriasDisponiveis,
+  produtoSelecionado,
+  estoqueInsuficiente,
+  alterarTipo,
+  fecharModal,
+  handleSubmit,
+} = useMovimentacaoForm(props, emit)
 </script>
 
 <template>
@@ -138,7 +59,9 @@ watch(() => props.isOpen, (novoEstado) => {
       </button>
     </div>
 
-    <p v-if="erro" class="text-red-700 bg-red-100 px-3 py-2 rounded-md text-base mb-4">{{ erro }}</p>
+    <p v-if="erro" class="text-red-700 bg-red-100 px-3 py-2 rounded-md text-base mb-4">
+      {{ erro }}
+    </p>
 
     <form class="flex flex-col gap-4" @submit.prevent="handleSubmit">
       <div class="flex flex-col gap-1.5">
