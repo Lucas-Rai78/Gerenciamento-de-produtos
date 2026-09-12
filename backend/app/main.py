@@ -1,14 +1,13 @@
-from fastapi import FastAPI, Depends, status
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy.orm import Session
-from typing import List
 
-from app.database.database import engine, get_db
-from app.modules.models import models
-from app.modules.schemas import schemas
-from app.modules.service import crud
+from app.database.database import engine
+from app.modules.produto.models import models as produto_models
+from app.modules.movimentacoes.models import models as movimentacao_models
+from app.modules.produto.endpoints.endpoints import router as produto_router
+from app.modules.movimentacoes.endpoints.endpoints import router as movimentacao_router
 
-models.Base.metadata.create_all(bind=engine)
+produto_models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Gerenciador de Estoque - LaPiazza")
 
@@ -20,3 +19,5 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(produto_router)
+app.include_router(movimentacao_router)

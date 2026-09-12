@@ -1,17 +1,19 @@
-from fastapi import FastAPI, Depends, status, app
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 from typing import List
 
-from app.database.database import engine, get_db
-from app.modules.models import models
-from app.modules.schemas import schemas
-from app.modules.service import crud
+from app.database.database import get_db
+from app.modules.movimentacoes.schemas import schemas
+from app.modules.movimentacoes.service import service as movimentacao_service
 
-@app.post("/movimentacoes", response_model=schemas.MovimentacaoResponse, status_code=status.HTTP_201_CREATED)
+router = APIRouter(prefix="/movimentacoes", tags=["Movimentações"])
+
+
+@router.post("", response_model=schemas.MovimentacaoResponse, status_code=status.HTTP_201_CREATED)
 def registrar_movimentacao(mov: schemas.MovimentacaoCreate, db: Session = Depends(get_db)):
-    return crud.create_movimentacao(db=db, mov=mov)
+    return movimentacao_service.create_movimentacao(db=db, mov=mov)
 
-@app.get("/movimentacoes", response_model=List[schemas.MovimentacaoResponse])
+
+@router.get("", response_model=List[schemas.MovimentacaoResponse])
 def listar_movimentacoes(db: Session = Depends(get_db)):
-    return crud.get_movimentacoes(db=db)
+    return movimentacao_service.get_movimentacoes(db=db)
